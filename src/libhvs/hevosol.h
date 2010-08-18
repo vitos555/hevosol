@@ -1,12 +1,15 @@
+//
+// Copyright (C) 2010, Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
+// Author: Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
+//
+
+// Custom types. To make further scaling easier.
 #define FLOAT_TYPE float
 #define UINT unsigned int
 
-typedef struct {
-	char	*initvortfile; /* Initial vorticity field file name */
-	FLOAT_TYPE	t0;
-	FLOAT_TYPE	t1;
-	FLOAT_TYPE	timestep;
-} hvs_params;
+// Status values
+#define HVS_OK 0
+#define HVS_ERR 1
 
 typedef struct {
 	FLOAT_TYPE x,y;
@@ -19,22 +22,22 @@ typedef struct {
 typedef FLOAT_TYPE hvs_moment;
 
 typedef struct {
-	hvs_position	position;
-	hvs_moment	velocity;
-} hvs_grid_point;
+	char	*initvortfile; /* Initial vorticity field file name */
+	FLOAT_TYPE	t0;
+	FLOAT_TYPE	t1;
+	FLOAT_TYPE	timestep;
+	FLOAT_TYPE	gridwidth, gridheight;
+} hvs_params;
 
 typedef struct {
-	UINT	width;
-	UINT	height;
-	hvs_grid_point *array;
-} hvs_grid;
+	UINT	width, height;
+	hvs_position*	grid;
+	hvs_vector*	velocity_field;
+	hvs_vector*	vorticity_field;
+	hvs_moment*	moments;
+} hvs_state;
 
-typedef struct {
-    hvs_position	position;
-    hvs_vector		vector;
-} hvs_field;
-
-hvs_grid* init_solver(UINT gridwidth, UINT gridheight);
-void free_solver(hvs_grid *grid);
-int run_solver();
-int format_output(hvs_grid *grid, size_t size, char *output);
+int init_solver(const hvs_params *params, hvs_state **sstate);
+void free_solver(hvs_state **sstate);
+int run_solver(const hvs_params *params, hvs_state *state);
+int format_output(hvs_state *state, size_t size, char *output);
