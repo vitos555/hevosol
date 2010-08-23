@@ -3,57 +3,80 @@
 // Author: Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
 //
 
+#include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "hevosol.h"
+#include "fileutil.h"
+
+#if HVS_MOMENTS == 2
+#include "hvs_two_moments.c"
+#elif HVS_MOMENTS == 1
+#include "hvs_one_moment.c"
+#else
+#include "hvs_simple.c"
+#endif
 
 int init_solver(const hvs_params *params, hvs_state **sstate) {
 	hvs_state* state = (hvs_state *) malloc(sizeof(hvs_state));
+	hvs_file* file;
+	hvs_position *pos = NULL;
+	hvs_vorticity *vort = NULL;
+	int status = 0;
+	UINT cursize = 0;
 	if (state == NULL) 
 		return HVS_ERR;
-	// Init grid
-	state->width = params->gridwidth;
-	state->height = params->gridheight;
-	UINT gridsize = params->gridwidth*params->gridheight;
-	state->grid = (hvs_position *) malloc(gridsize*sizeof(hvs_position));
-	if (state->grid == NULL) {
+	// Init file handler
+	if (initfile(params->initvortfile, &file)) {
 		free(state);
 		state = NULL;
 		return HVS_ERR;
 	}
+	
+	// Read data
+	do {
+		cursize += status;
+		if ((pos = (hvs_position *)realloc(pos, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_position)))==NULL) {
+			free(state);
+			state = NULL;
+			return HVS_ERR;
+		}
+		if ((vort = (hvs_vorticity *)realloc(vort, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_vorticity)))==NULL) {
+			free(state);
+			state = NULL;
+			return HVS_ERR;
+		}
+	} while ((status = readdata(file,HVS_READ_BLOCK_SIZE,
+			pos+cursize*sizeof(hvs_position),
+			vort+cursize*sizeof(hvs_vorticity))) == HVS_READ_BLOCK_SIZE);
+	if (status < 0) {
+		free(state);
+		state = NULL;
+		return status;
+	}
+	cursize += status;
+	
+	// Check if we have regular grid
+	if (checkgrid(pos) != HVS_OK) {
+		return HVS_ERR_IRREGULAR_GRID;
+	}
+	
+	// Copy values to the state structure
+	state->size = cursize;
+	state->grid = pos;
+	state->vorticity_field = vort;
 	state->moments = NULL;
-	state->velocity_field = (hvs_vector *) malloc(gridsize*sizeof(hvs_vector));
+	
+	// Initialize velocity field
+	state->velocity_field = (hvs_vector *) malloc(cursize*sizeof(hvs_vector));
 	if (state->velocity_field == NULL) {
 		free(state);
 		state = NULL;
 		return HVS_ERR;
 	}
-	memset(state->velocity_field, 0, gridsize*sizeof(hvs_vector));
-	state->vorticity_field = NULL;
+	memset(state->velocity_field, 0, cursize*sizeof(hvs_vector));
 	*sstate = state;
-	return HVS_OK;
-}
-
-int advect_points(hvs_state *state, FLOAT_TYPE timestep) {
-	UINT i,j;
-	for (i=0; i<state->width; i++)
-		for (j=0; j<state->height; j++) {
-			(state->grid[i+j*state->height]).x = timestep*state->velocity_field[i+j*state->width].xval;
-			(state->grid[i+j*state->height]).y = timestep*state->velocity_field[i+j*state->width].yval;
-		}
-	return HVS_OK;
-}
-
-int update_moments(hvs_state *state, FLOAT_TYPE timestep) {
-	return HVS_OK;
-}
-
-int update_vorticity_field(hvs_state *state) {
-	return HVS_OK;
-}
-
-int update_velocity_field(hvs_state *state) {
 	return HVS_OK;
 }
 
@@ -78,12 +101,21 @@ void free_solver(hvs_state **sstate) {
 }
 
 int run_solver(const hvs_params *params, hvs_state *state) {
-	return advect_points(state, params->timestep)
-			& update_moments(state, params->timestep)
-			& update_vorticity_field(state)
-			& update_velocity_field(state);
+	unsigned int i;
+	char status;
+	unsigned int stepsnum = floor((params->t1-params->t0)/params->timestep);
+	for(i=0;i<stepsnum;i++) {
+		if (!(status = step_solver(state, params->timestep))) {
+			return status;
+		}
+	}
+	return update_vorticity_field(state);
 }
 
-int format_output(hvs_state *state, size_t size, char *output) {
-	return snprintf(output, size, "Width: %u, height: %u.\n", state->width, state->height);
+int write_output(const hvs_state *state, const char *filename) {
+	return writedata(state, filename);
+}
+
+int checkgrid(hvs_position *pos, hvs_vorticity *vort) {
+	return HVS_OK;
 }
