@@ -17,7 +17,7 @@
 #include "hvs_simple.c"
 #endif
 
-int init_solver_by_moments(UINT ncenters, const hvs_center *centers, const hvs_moment *moments,
+int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_center *centers, const hvs_moment *moments,
 				FLOAT_TYPE xmin, FLOAT_TYPE xmax, FLOAT_TYPE xstep, 
 				FLOAT_TYPE ymin, FLOAT_TYPE ymax, FLOAT_TYPE ystep, hvs_state **sstate) {
 	hvs_state* state = (hvs_state *) malloc(sizeof(hvs_state));
@@ -94,7 +94,7 @@ int init_solver_by_moments(UINT ncenters, const hvs_center *centers, const hvs_m
 	memset(state->velocity_field, 0, state->size*sizeof(hvs_vector));
 
 	// We have moments and thus we can update vorticity field
-	update_vorticity_field(state);
+	update_vorticity_field(params, state);
 	(*sstate) = state;
 	return HVS_OK;
 }
@@ -215,11 +215,11 @@ int run_solver(const hvs_params *params, hvs_state *state) {
 	char status;
 	unsigned int stepsnum = floor((params->t1-params->t0)/params->timestep);
 	for(i=0;i<stepsnum;i++) {
-		if (!(status = step_solver(state, params->timestep))) {
+		if ((status = step_solver(state, params->timestep)) != HVS_OK) {
 			return status;
 		}
 	}
-	return update_vorticity_field(state);
+	return update_vorticity_field(params, state);
 }
 
 int write_output(const hvs_state *state, const char *filename) {

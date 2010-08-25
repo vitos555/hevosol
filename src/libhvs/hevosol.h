@@ -5,10 +5,6 @@
 
 #define HEVOSOL_H 1
 
-// Custom types. To make further scaling easier.
-#define FLOAT_TYPE float
-#define UINT unsigned int
-
 // Number of moments to include
 #define NMOMENTS 2
 
@@ -36,7 +32,8 @@ typedef struct {
 	FLOAT_TYPE	t0;
 	FLOAT_TYPE	t1;
 	FLOAT_TYPE	timestep;
-	FLOAT_TYPE	gridwidth, gridheight;
+	FLOAT_TYPE	lambda0;
+	FLOAT_TYPE	nu;
 } hvs_params;
 
 typedef struct {
@@ -51,7 +48,7 @@ typedef struct {
 } hvs_state;
 
 int init_solver(const hvs_params *params, hvs_state **sstate);
-int init_solver_by_moments(UINT ncenters, const hvs_center *centers, const hvs_moment *moments,
+int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_center *centers, const hvs_moment *moments,
 				FLOAT_TYPE xmin, FLOAT_TYPE xmax, FLOAT_TYPE xstep, 
 				FLOAT_TYPE ymin, FLOAT_TYPE ymax, FLOAT_TYPE ystep, hvs_state **sstate);
 void free_solver(hvs_state **sstate);
