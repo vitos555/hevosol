@@ -10,6 +10,7 @@
 #include "hevosol.h"
 #include "fileutil.h"
 #include "hermiteutil.h"
+#include "factorialutil.h"
 
 #if NMOMENTS == 2
 #include "hvs_two_moments.c"
@@ -92,6 +93,20 @@ int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_center *
 		return HVS_ERR;
 	}
 	memset(state->velocity_field, 0, state->size*sizeof(hvs_vector));
+
+	// Initialize coefficients
+	state->coefs = (hvs_coefs *) malloc(sizeof(hvs_coefs));
+	if (state->coefs == NULL) {
+		free(state->moments);
+		free(state->centers);
+		free(state->grid);
+		free(state->vorticity_field);
+		free(state->velocity_field);
+		free(state);
+		state = NULL;
+	}
+	memset(state->coefs, 0, sizeof(hvs_coefs));
+	init_coefs(state->coefs);
 
 	// We have moments and thus we can update vorticity field
 	update_vorticity_field(params, state);
@@ -178,6 +193,21 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 		return HVS_ERR;
 	}
 	memset(state->velocity_field, 0, cursize*sizeof(hvs_vector));
+
+	// Initialize coefficients
+	state->coefs = (hvs_coefs *) malloc(sizeof(hvs_coefs));
+	if (state->coefs == NULL) {
+		free(state->moments);
+		free(state->centers);
+		free(state->grid);
+		free(state->vorticity_field);
+		free(state->velocity_field);
+		free(state);
+		state = NULL;
+	}
+	memset(state->coefs, 0, sizeof(hvs_coefs));
+	init_coefs(state->coefs);
+
 	*sstate = state;
 	return HVS_OK;
 }
@@ -204,6 +234,10 @@ void free_solver(hvs_state **sstate) {
 		if (state->vorticity_field != NULL) {
 			free(state->vorticity_field);
 			state->vorticity_field = NULL;
+		}
+		if (state->coefs != NULL) {
+			free(state->coefs);
+			state->coefs = NULL;
 		}
 		free(state);
 		(*sstate) = NULL;
