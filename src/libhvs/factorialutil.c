@@ -2,12 +2,12 @@
 
 // For small values we precompute values
 UINT factorial_small(UINT n) {
-	UINT a[] = (1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800);
+	UINT a[] = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880, 3628800};
 	return a[n];
 }
 
 UINT binomial_small(UINT n, UINT k) {
-	UINT pascal_triangle[] = (
+	UINT pascal_triangle[] = {
 	1,
 	1, 1,
 	1, 2, 1,
@@ -20,7 +20,7 @@ UINT binomial_small(UINT n, UINT k) {
 	1, 9, 36, 84, 126, 126, 84, 36, 9, 1,
 	1, 10, 45, 120, 210, 252, 210, 120, 45, 10, 1,
 	1, 11, 55, 165, 330, 462, 462, 330, 165, 55, 11, 1
-	);
+	};
 	return pascal_triangle[(n-1)*(n-2)/2+k];
 
 }

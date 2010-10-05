@@ -1,5 +1,5 @@
 #include "hermiteutil.h"
-#include "factorialutial.h"
+#include "factorialutil.h"
 #include <math.h>
 
 #define PI_INV 1/M_PI
@@ -7,6 +7,23 @@
 #if NMOMENTS > 2
 #error "Current implementation doesn't support moments of order higher then 2."
 #endif
+
+FLOAT_TYPE Power(FLOAT_TYPE x, int power) {
+	switch(power) {
+		case 0:
+			return 1.0;
+		case 1:
+			return x;
+		case 2:
+			return x*x;
+		case 3:
+			return x*x*x;
+		case 4:
+			return x*x*x*x;
+		default:
+			return log(power*exp(x));
+	}
+}
 
 FLOAT_TYPE he_00(FLOAT_TYPE x1, FLOAT_TYPE x2, FLOAT_TYPE lambda_sq) {
 	return PI_INV/lambda_sq*exp(-(x1*x1+x2*x2)/lambda_sq);
@@ -49,8 +66,8 @@ FLOAT_TYPE he(FLOAT_TYPE x1, FLOAT_TYPE x2, FLOAT_TYPE lambda_sq, unsigned short
 		return 0.0;
 }
 
-FLOAT_TYPE h1(alpha1,alpha2,lambda_sq) {
-	if ((alpha_1%2==1) && (alpha_2%2==0)) {
+FLOAT_TYPE h1(UINT alpha1, UINT alpha2, FLOAT_TYPE lambda_sq) {
+	if ((alpha1%2==1) && (alpha2%2==0)) {
 		int alpha_temp = (alpha1+alpha2-1)/2;
 		int negone = (alpha_temp%2==0?1:-1);
 		return
@@ -62,8 +79,8 @@ FLOAT_TYPE h1(alpha1,alpha2,lambda_sq) {
 	}
 }
 
-FLOAT_TYPE h2(alpha1,alpha2,lambda_sq) {
-	if ((alpha_1%2==1) && (alpha_2%2==0)) {
+FLOAT_TYPE h2(UINT alpha1, UINT alpha2,FLOAT_TYPE lambda_sq) {
+	if ((alpha1%2==1) && (alpha2%2==0)) {
 		int alpha_temp = (alpha1+alpha2-1)/2;
 		int negone = (alpha_temp%2==0?1:-1);
 		return
@@ -75,25 +92,8 @@ FLOAT_TYPE h2(alpha1,alpha2,lambda_sq) {
 	}
 }
 
-FLOAT_TYPE Power(FLOAT_TYPE x, int power) {
-	switch(power) {
-		case 0:
-			return 1.0;
-		case 1:
-			return x;
-		case 2:
-			return x*x;
-		case 3:
-			return x*x*x;
-		case 4:
-			return x*x*x*x;
-		default:
-			return log(power*exp(x));
-	}
-}
-
 FLOAT_TYPE hb1(FLOAT_TYPE x1,FLOAT_TYPE x2,FLOAT_TYPE lambdasq,UINT k1,UINT k2) {
-	FLOAT_TYPE he0 = exp(-(x1*x1+x2*x2)/lambda_sq);
+	FLOAT_TYPE he0 = exp(-(x1*x1+x2*x2)/lambdasq);
 	FLOAT_TYPE Pi = M_PI;
 	if ( (k1==0) && (k2==0) )
 		return ((-1 + he0)*x2)/(4.*Pi*Power(x1,2));
@@ -117,7 +117,7 @@ FLOAT_TYPE hb1(FLOAT_TYPE x1,FLOAT_TYPE x2,FLOAT_TYPE lambdasq,UINT k1,UINT k2) 
 }
 
 FLOAT_TYPE hb2(FLOAT_TYPE x1,FLOAT_TYPE x2,FLOAT_TYPE lambdasq,UINT k1,UINT k2) {
-	FLOAT_TYPE he0 = exp(-(x1*x1+x2*x2)/lambda_sq);
+	FLOAT_TYPE he0 = exp(-(x1*x1+x2*x2)/lambdasq);
 	FLOAT_TYPE Pi = M_PI;
 	if ( (k1==0) && (k2==0) )
 		return (x1 - he0*x1)/(2*Pi*Power(x1,2) + 2*Pi*Power(x2,2));

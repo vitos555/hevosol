@@ -25,23 +25,26 @@
 #define COEF_INDEX(k1,k2,l1,l2,m1,m2,i,j) ((k1)*NMOMENTS_7+(k2)*NMOMENTS_6+\
 	(l1)*NMOMENTS_5+(l2)*NMOMENTS_4+\
 	(m1)*NMOMENTS_3+(m2)*NMOMENTS_2+\
-	(i)*NMOMENTS+(j)
+	(i)*NMOMENTS+(j))
+#define MOM_INDEX(i,j) ((i)*((i)-1)/2+(j))
 
 #include <unistd.h>
+
+#include "gentypes.h"
 
 #ifndef HVS_ERRORUTIL_H
 #include "errorutil.h"
 #endif
 
 typedef struct s_hvs_position {
-	FLOAT_TYPE x,y;
+	FLOAT_TYPE x, y;
 } hvs_position;
 
 typedef struct s_hvs_vector {
 	FLOAT_TYPE	xval, yval;
 } hvs_vector;
 
-typedef FLOAT_TYPE hvs_moment[NMOMENTS*(NMOMENTS-1)/2];
+typedef FLOAT_TYPE hvs_moment[MOMENTS_LEN];
 typedef struct s_hvs_position hvs_center;
 typedef struct s_hvs_vector hvs_velocity;
 typedef FLOAT_TYPE hvs_vorticity;
@@ -56,6 +59,13 @@ typedef struct {
 } hvs_params;
 
 typedef struct {
+	FLOAT_TYPE gamma1a[NMOMENTS_8];
+	FLOAT_TYPE gamma2a[NMOMENTS_8];
+	FLOAT_TYPE gamma1b[NMOMENTS_8];
+	FLOAT_TYPE gamma2b[NMOMENTS_8];
+} hvs_coefs;
+
+typedef struct {
 	UINT	size, sizex, sizey, ncenters;
 	FLOAT_TYPE	xmin, xmax, xstep;
 	FLOAT_TYPE	ymin, ymax, ystep;
@@ -68,16 +78,11 @@ typedef struct {
 } hvs_state;
 
 typedef struct {
-	FLOAT_TYPE gamma1a[NMOMENTS_8];
-	FLOAT_TYPE gamma2a[NMOMENTS_8];
-	FLOAT_TYPE gamma1b[NMOMENTS_8];
-	FLOAT_TYPE gamma2b[NMOMENTS_8];
-} hvs_coefs;
-
-typedef struct {
-	hvs_moment moment;
-	hvs_position center;
-} hvs_moment_center_combined;
+	hvs_moment	*moments;
+	hvs_position	*centers;
+	FLOAT_TYPE	lambdasq;
+	UINT		ncenters;
+} hvs_ode_data;
 
 int init_solver(const hvs_params *params, hvs_state **sstate);
 int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_center *centers, const hvs_moment *moments,
