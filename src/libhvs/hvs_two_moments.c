@@ -35,9 +35,9 @@ int update_vorticity_field(hvs_state *state, hvs_params *params) {
 	for (i=0; i<state->size; i++) {
 		sum = 0.0;
 		for (j=0; j<state->ncenters; j++) {
-			sum += 	state->moments[j][0]*he(state->grid[i].x,state->grid[i].y,lambda_sq,0,0)+
-				state->moments[j][1]*he(state->grid[i].x,state->grid[i].y,lambda_sq,0,2)+
-				state->moments[j][2]*he(state->grid[i].x,state->grid[i].y,lambda_sq,2,0);
+			sum += 	state->moments[j][MOM_INDEX(0,0)]*he(state->grid[i].x,state->grid[i].y,lambda_sq,0,0)+
+				state->moments[j][MOM_INDEX(0,2)]*he(state->grid[i].x,state->grid[i].y,lambda_sq,0,2)+
+				state->moments[j][MOM_INDEX(2,0)]*he(state->grid[i].x,state->grid[i].y,lambda_sq,2,0);
 		}
 		state->vorticity_field[i] = sum;
 	}

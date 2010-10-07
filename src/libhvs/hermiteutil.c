@@ -67,12 +67,12 @@ FLOAT_TYPE he(FLOAT_TYPE x1, FLOAT_TYPE x2, FLOAT_TYPE lambda_sq, unsigned short
 }
 
 FLOAT_TYPE h1(UINT alpha1, UINT alpha2, FLOAT_TYPE lambda_sq) {
-	if ((alpha1%2==1) && (alpha2%2==0)) {
+	if ((alpha1%2==0) && (alpha2%2==1)) {
 		int alpha_temp = (alpha1+alpha2-1)/2;
 		int negone = (alpha_temp%2==0?1:-1);
 		return
-			(-0.25)*PI_INV/lambda_sq*negone*
-			factorial(alpha1)/factorial(alpha_temp)*
+			(-0.5)*PI_INV/Power(2*lambda_sq,alpha_temp+1)*negone*
+			factorial(alpha1)/factorial(alpha_temp+1)*
 			factorial(alpha2)*binomial(alpha_temp,(int)alpha1/2);
 	} else {
 		return 0.0;
@@ -84,8 +84,8 @@ FLOAT_TYPE h2(UINT alpha1, UINT alpha2,FLOAT_TYPE lambda_sq) {
 		int alpha_temp = (alpha1+alpha2-1)/2;
 		int negone = (alpha_temp%2==0?1:-1);
 		return
-			(0.25)*PI_INV/lambda_sq*negone*
-			factorial(alpha1)/factorial(alpha_temp)*
+			(0.5)*PI_INV/Power(2*lambda_sq,alpha_temp+1)*negone*
+			factorial(alpha1)/factorial(alpha_temp+1)*
 			factorial(alpha2)*binomial(alpha_temp,(UINT)(alpha1-1)/2);
 	} else {
 		return 0.0;

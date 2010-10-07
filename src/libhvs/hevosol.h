@@ -17,7 +17,7 @@
 #define NMOMENTS_9 512
 #define NMOMENTS_10 1024
 
-#define MOMENTS_LEN 4
+#define MOMENTS_LEN 6
 
 #define MIN(a,b) ((a)>(b)?(b):(a))
 #define POWN1(a) ((a)%2==0?1:-1)
@@ -26,7 +26,7 @@
 	(l1)*NMOMENTS_5+(l2)*NMOMENTS_4+\
 	(m1)*NMOMENTS_3+(m2)*NMOMENTS_2+\
 	(i)*NMOMENTS+(j))
-#define MOM_INDEX(i,j) ((i)*((i)-1)/2+(j))
+#define MOM_INDEX(i,j) (((i)+(j))*((i)+(j)+1)/2+(j))
 
 #include <unistd.h>
 
