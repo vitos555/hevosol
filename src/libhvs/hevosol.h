@@ -21,6 +21,8 @@
 
 #define MIN(a,b) ((a)>(b)?(b):(a))
 #define POWN1(a) ((a)%2==0?1:-1)
+#define POW2(a) ((a)==0?1:2<<((a)-1))
+#define POW(a,b) ((b)==0?1:((b)==1?(a):((b)==2?(a)*(a):((b)==3?(a)*(a)*(a):pow((a),(b))))))
 
 #define COEF_INDEX(k1,k2,l1,l2,m1,m2,i,j) ((k1)*NMOMENTS_7+(k2)*NMOMENTS_6+\
 	(l1)*NMOMENTS_5+(l2)*NMOMENTS_4+\
@@ -59,10 +61,8 @@ typedef struct {
 } hvs_params;
 
 typedef struct {
-	FLOAT_TYPE gamma1a[NMOMENTS_8];
-	FLOAT_TYPE gamma2a[NMOMENTS_8];
-	FLOAT_TYPE gamma1b[NMOMENTS_8];
-	FLOAT_TYPE gamma2b[NMOMENTS_8];
+	FLOAT_TYPE gamma1[NMOMENTS_8];
+	FLOAT_TYPE gamma2[NMOMENTS_8];
 } hvs_coefs;
 
 typedef struct {

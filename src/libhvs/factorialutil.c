@@ -22,7 +22,6 @@ UINT binomial_small(UINT n, UINT k) {
 	1, 11, 55, 165, 330, 462, 462, 330, 165, 55, 11, 1
 	};
 	return pascal_triangle[(n-1)*(n-2)/2+k];
-
 }
 
 UINT factorial(UINT n) {

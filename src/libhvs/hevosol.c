@@ -109,7 +109,7 @@ int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_center *
 	init_coefs(state->coefs);
 
 	// We have moments and thus we can update vorticity field
-	update_vorticity_field(params, state);
+	update_vorticity_field(state, params);
 	(*sstate) = state;
 	return HVS_OK;
 }
@@ -255,7 +255,7 @@ int run_solver(const hvs_params *params, hvs_state *state) {
 			return status;
 		}
 	}
-	return update_vorticity_field(params, state);
+	return update_vorticity_field(state, params);
 }
 
 int write_output(const hvs_state *state, const char *filename) {
