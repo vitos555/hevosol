@@ -18,7 +18,7 @@
 #include "hvs_simple.c"
 #endif
 
-int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_center *centers, const hvs_moment *moments,
+int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_centers centers, const hvs_moments moments,
 				FLOAT_TYPE xmin, FLOAT_TYPE xmax, FLOAT_TYPE xstep, 
 				FLOAT_TYPE ymin, FLOAT_TYPE ymax, FLOAT_TYPE ystep, hvs_state **sstate) {
 	hvs_state* state = (hvs_state *) malloc(sizeof(hvs_state));
@@ -39,8 +39,14 @@ int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_center *
 		return HVS_ERR;
 	}
 	
-	state->moments = (hvs_moment *) malloc(sizeof(hvs_moment)*ncenters);
+	state->moments = (hvs_moments) malloc(sizeof(hvs_moment)*ncenters);
 	if (state->moments == NULL) {
+		free(state->centers);
+		free(state);
+		state = NULL;
+		return HVS_ERR;
+	}
+	if(memcpy(state->moments, moments, sizeof(hvs_moment)*ncenters) == NULL) {
 		free(state->centers);
 		free(state);
 		state = NULL;

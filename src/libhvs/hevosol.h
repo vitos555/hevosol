@@ -47,7 +47,9 @@ typedef struct s_hvs_vector {
 } hvs_vector;
 
 typedef FLOAT_TYPE hvs_moment[MOMENTS_LEN];
+typedef hvs_moment* hvs_moments;
 typedef struct s_hvs_position hvs_center;
+typedef hvs_center* hvs_centers;
 typedef struct s_hvs_vector hvs_velocity;
 typedef FLOAT_TYPE hvs_vorticity;
 
@@ -72,20 +74,20 @@ typedef struct {
 	hvs_position*	grid;
 	hvs_velocity*	velocity_field;
 	hvs_vorticity*	vorticity_field;
-	hvs_moment*	moments;
-	hvs_center*	centers;
+	hvs_moments	moments;
+	hvs_centers	centers;
 	hvs_coefs*	coefs;
 } hvs_state;
 
 typedef struct {
-	hvs_moment	*moments;
-	hvs_position	*centers;
+	hvs_moments	moments;
+	hvs_centers	centers;
 	FLOAT_TYPE	lambdasq;
 	UINT		ncenters;
 } hvs_ode_data;
 
 int init_solver(const hvs_params *params, hvs_state **sstate);
-int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_center *centers, const hvs_moment *moments,
+int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_centers centers, const hvs_moments moments,
 				FLOAT_TYPE xmin, FLOAT_TYPE xmax, FLOAT_TYPE xstep, 
 				FLOAT_TYPE ymin, FLOAT_TYPE ymax, FLOAT_TYPE ystep, hvs_state **sstate);
 void free_solver(hvs_state **sstate);

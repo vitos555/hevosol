@@ -43,7 +43,7 @@ ssize_t writedata(const hvs_state *state, const char *filename) {
 		return HVS_ERR;
 	}
 	while(writecount<state->size) {
-		fprintf(fh, "%f\t%f\t%f\n", state->grid[writecount].x, state->grid[writecount].y, state->vorticity_field[writecount]);
+		fprintf(fh, "%f\t%f\t%.12f\n", state->grid[writecount].x, state->grid[writecount].y, state->vorticity_field[writecount]);
 		writecount++;
 	}
 	fclose(fh);

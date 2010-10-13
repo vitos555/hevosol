@@ -76,10 +76,12 @@ int eval_eq(hvs_ode_data *input, hvs_ode_data *output, hvs_coefs *coefs, FLOAT_T
 	}
 	printf("gamma_test=%.10f\n",gamma1);
 */
+	// First evaluate centers equation
 	for (i0=0; i0<input->ncenters; i0++) {
 		output->centers[i0].x=0;
 		output->centers[i0].y=0;
-		for(j0=0; j0<input->ncenters; j0++)
+		for(j0=0; j0<input->ncenters; j0++) {
+		if (i0==j0) continue;
 		for(l1=0;l1<NMOMENTS;l1++)
 		for(l2=0;l2<NMOMENTS;l2++)
 			for(m1=0;m1<NMOMENTS;m1++)
@@ -104,11 +106,14 @@ int eval_eq(hvs_ode_data *input, hvs_ode_data *output, hvs_coefs *coefs, FLOAT_T
 				input->lambdasq,
 				m1+l1,m2+l2);
 			}
-		output->centers[i0].x/=input->moments[i0][0];
-		output->centers[i0].y/=input->moments[i0][0];
+		}
+		output->centers[i0].x/=input->moments[i0][MOM_INDEX(0,0)];
+		output->centers[i0].y/=input->moments[i0][MOM_INDEX(0,0)];
 	}
+	
+	// Now get the moments equations
 	for (i0=0; i0<input->ncenters; i0++) {
-		memset(output->moments[i0],0,MOMENTS_LEN*sizeof(hvs_moment));
+		memset(output->moments[i0],0,sizeof(hvs_moment));
 		for(j0=0; j0<input->ncenters; j0++)
 			for(k1=0;k1<NMOMENTS;k1++)
 			for(k2=0;k2<NMOMENTS;k2++) {
@@ -142,21 +147,27 @@ gamma2+=coefs->gamma2[COEF_INDEX(k1,k2,l1,l2,m1,m2,i,j)]/
 				lambdasq,m1+k1-i+l1-i,m2+k2-j-1+l2-j);
 						}
 					}
-					output->moments[i0][MOM_INDEX(k1,k2)] = (gamma1+gamma2)*
-						input->moments[i0][MOM_INDEX(k1,k2)]*
-						input->moments[j0][MOM_INDEX(k1,k2)];
+					// Add A+B
+					output->moments[i0][MOM_INDEX(k1,k2)] += (gamma1+gamma2)*
+						input->moments[i0][MOM_INDEX(l1,l2)]*
+						input->moments[j0][MOM_INDEX(m1,m2)]*
+						POWN1(k1+k2)*POW(input->lambdasq,k1+k2)/
+						(POW2(k1+k2)*factorial(k1)*factorial(k2));
 				}
 				// Add C once
 				if (j0==0) {
-					output->moments[i0][MOM_INDEX(k1,k2)]*=
-					POWN1(k1+k2)*POW(input->lambdasq,k1+k2)/
-					((2<<(k1+k2-1))*factorial(k1)*factorial(k2));
-					output->moments[i0][MOM_INDEX(k1,k2)]+=
-					output->centers[i0].x*output->moments[i0][MOM_INDEX(k1-1,k2)]+
-					output->centers[i0].y*output->moments[i0][MOM_INDEX(k1,k2-1)];
+					if (k1>0)
+						output->moments[i0][MOM_INDEX(k1,k2)]+=
+							output->centers[i0].x*
+							input->moments[i0][MOM_INDEX(k1-1,k2)];
+					if (k2>0)
+						output->moments[i0][MOM_INDEX(k1,k2)]+=
+							output->centers[i0].y*
+							input->moments[i0][MOM_INDEX(k1,k2-1)];
 				}
 			}
 	}
+	return HVS_OK;
 }
 
 int rk4_hvs_solve(hvs_ode_data *curdata, hvs_coefs *coefs, FLOAT_TYPE tn, FLOAT_TYPE timestep, FLOAT_TYPE nu) {
@@ -164,6 +175,7 @@ int rk4_hvs_solve(hvs_ode_data *curdata, hvs_coefs *coefs, FLOAT_TYPE tn, FLOAT_
 	int status;
 	int i0,i1,i2;
 
+	// Initialize k1,k2,k3,k4 - rk4 function evaluations
 	if ((status=init_ode_data(&kt,curdata))!=HVS_OK) {
 		return status;
 	}
@@ -179,10 +191,13 @@ int rk4_hvs_solve(hvs_ode_data *curdata, hvs_coefs *coefs, FLOAT_TYPE tn, FLOAT_
 	if ((status=init_ode_data(&k4,curdata))!=HVS_OK) {
 		return status;
 	}
-
+	
+	// Get k1
 	if ((status=eval_eq(curdata, &k1, coefs, tn))!=HVS_OK) {
 		return status;
 	}
+	
+	// Update kt
 	for (i0=0; i0<curdata->ncenters; i0++) {
 		for (i1=0; i1<NMOMENTS; i1++) 
 		for (i2=0; i2<NMOMENTS; i2++) {
@@ -191,9 +206,15 @@ int rk4_hvs_solve(hvs_ode_data *curdata, hvs_coefs *coefs, FLOAT_TYPE tn, FLOAT_
 		kt.centers[i0].x = curdata->centers[i0].x+k1.centers[i0].x*0.5*timestep;
 		kt.centers[i0].y = curdata->centers[i0].y+k1.centers[i0].y*0.5*timestep;
 		kt.lambdasq += 4*0.5*timestep*nu;
-		if ((status=eval_eq(&kt, &k2, coefs, tn))!=HVS_OK) {
-			return status;
-		}
+	}
+	
+	// Get k2
+	if ((status=eval_eq(&kt, &k2, coefs, tn))!=HVS_OK) {
+		return status;
+	}
+	
+	// Update kt
+	for (i0=0; i0<curdata->ncenters; i0++) {
 		for (i1=0; i1<NMOMENTS; i1++) 
 		for (i2=0; i2<NMOMENTS; i2++) {
 			kt.moments[i0][MOM_INDEX(i1,i2)] = curdata->moments[i0][MOM_INDEX(i1,i2)]+k2.moments[i0][MOM_INDEX(i1,i2)]*0.5*timestep;
@@ -201,9 +222,15 @@ int rk4_hvs_solve(hvs_ode_data *curdata, hvs_coefs *coefs, FLOAT_TYPE tn, FLOAT_
 		kt.centers[i0].x = curdata->centers[i0].x+k2.centers[i0].x*0.5*timestep;
 		kt.centers[i0].y = curdata->centers[i0].y+k2.centers[i0].y*0.5*timestep;
 		kt.lambdasq += 4*0.5*timestep*nu;
-		if ((status=eval_eq(&kt, &k3, coefs, tn))!=HVS_OK) {
-			return status;
-		}
+	}
+	
+	// Get k3
+	if ((status=eval_eq(&kt, &k3, coefs, tn))!=HVS_OK) {
+		return status;
+	}
+	
+	// Update kt
+	for (i0=0; i0<curdata->ncenters; i0++) {
 		for (i1=0; i1<NMOMENTS; i1++) 
 		for (i2=0; i2<NMOMENTS; i2++) {
 			kt.moments[i0][MOM_INDEX(i1,i2)] = curdata->moments[i0][MOM_INDEX(i1,i2)]+k3.moments[i0][MOM_INDEX(i1,i2)]*timestep;
@@ -211,22 +238,34 @@ int rk4_hvs_solve(hvs_ode_data *curdata, hvs_coefs *coefs, FLOAT_TYPE tn, FLOAT_
 		kt.centers[i0].x = curdata->centers[i0].x+k3.centers[i0].x*timestep;
 		kt.centers[i0].y = curdata->centers[i0].y+k3.centers[i0].y*timestep;
 		kt.lambdasq += 4*timestep*nu;
-		if ((status=eval_eq(&kt, &k4, coefs, tn))!=HVS_OK) {
-			return status;
-		}
+	}
+	
+	// Get k4
+	if ((status=eval_eq(&kt, &k4, coefs, tn))!=HVS_OK) {
+		return status;
+	}
+	
+	
+	// Use k1,k2,k3,k4 to find rk4 value
+	for (i0=0; i0<curdata->ncenters; i0++) {
 		for (i1=0; i1<NMOMENTS; i1++) 
 		for (i2=0; i2<NMOMENTS; i2++) {
-			curdata->moments[i0][MOM_INDEX(i1,i2)] = curdata->moments[i0][MOM_INDEX(i1,i2)]+1/6*timestep*
+			curdata->moments[i0][MOM_INDEX(i1,i2)] = curdata->moments[i0][MOM_INDEX(i1,i2)]+1.0/6*timestep*
 				(k1.moments[i0][MOM_INDEX(i1,i2)]+2*k2.moments[i0][MOM_INDEX(i1,i2)]+2*k3.moments[i0][MOM_INDEX(i1,i2)]+k4.moments[i0][MOM_INDEX(i1,i2)]);
 		}
-		curdata->centers[i0].x = curdata->centers[i0].x+1/6*timestep*(k1.centers[i0].x+2*k2.centers[i0].x+2*k3.centers[i0].x+k4.centers[i0].x);
-		curdata->centers[i0].y = curdata->centers[i0].y+1/6*timestep*(k1.centers[i0].y+2*k2.centers[i0].y+2*k3.centers[i0].y+k4.centers[i0].y);
+		curdata->centers[i0].x = curdata->centers[i0].x+1.0/6*timestep*(k1.centers[i0].x+2*k2.centers[i0].x+2*k3.centers[i0].x+k4.centers[i0].x);
+		curdata->centers[i0].y = curdata->centers[i0].y+1.0/6*timestep*(k1.centers[i0].y+2*k2.centers[i0].y+2*k3.centers[i0].y+k4.centers[i0].y);
 	}
+	
+	// Free all the intermediate values
 	free_ode_data(&kt);
 	free_ode_data(&k1);
 	free_ode_data(&k2);
 	free_ode_data(&k3);
 	free_ode_data(&k4);
+	
+//	printf("m00=%.12f,m20=%.12f,m11=%.12f,m02=%.12f\n",curdata->moments[0][0],curdata->moments[0][3],curdata->moments[0][4],curdata->moments[0][5]);
+//	printf("y1=%.12f,y2=%.12f\n", curdata->centers[0].y, curdata->centers[1].y);
 	return HVS_OK;
 }
 
