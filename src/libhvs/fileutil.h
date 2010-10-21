@@ -1,3 +1,8 @@
+//
+// Copyright (C) 2010, Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
+// Author: Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
+//
+
 #define HVS_READ_BLOCK_SIZE 100
 
 #ifndef HEVOSOL_H

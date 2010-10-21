@@ -1,3 +1,8 @@
+//
+// Copyright (C) 2010, Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
+// Author: Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
+//
+
 // Custom types. To make further scaling easier.
 #define HVS_FLOAT 1
 #define HVS_DOUBLE 2

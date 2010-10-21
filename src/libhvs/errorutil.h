@@ -1,3 +1,8 @@
+//
+// Copyright (C) 2010, Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
+// Author: Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
+//
+
 #include <errno.h>
 #include <string.h>
 
