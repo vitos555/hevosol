@@ -21,12 +21,12 @@ FLOAT_TYPE Power(FLOAT_TYPE x, int power) {
 		case 4:
 			return x*x*x*x;
 		default:
-			return pow(x,power);
+			return M_POW(x,power);
 	}
 }
 
 FLOAT_TYPE he_00(FLOAT_TYPE x1, FLOAT_TYPE x2, FLOAT_TYPE lambda_sq) {
-	return PI_INV/lambda_sq*exp(-(x1*x1+x2*x2)/lambda_sq);
+	return PI_INV/lambda_sq*M_EXP(-(x1*x1+x2*x2)/lambda_sq);
 }
 
 FLOAT_TYPE he_10(FLOAT_TYPE x1, FLOAT_TYPE x2, FLOAT_TYPE lambda_sq) {
@@ -93,7 +93,7 @@ FLOAT_TYPE h2(UINT alpha1, UINT alpha2,FLOAT_TYPE lambda_sq) {
 }
 
 FLOAT_TYPE hb1(FLOAT_TYPE x1,FLOAT_TYPE x2,FLOAT_TYPE lambdasq,UINT k1,UINT k2) {
-	FLOAT_TYPE he0 = exp(-(x1*x1+x2*x2)/lambdasq*0.5);
+	FLOAT_TYPE he0 = M_EXP(-(x1*x1+x2*x2)/lambdasq*0.5);
 	FLOAT_TYPE Pi = M_PI;
 	if ( (k1==0) && (k2==0) )
 		return ((-1 + he0)*x2)/(2.*Pi*(Power(x1,2) + Power(x2,2)));
@@ -246,7 +246,7 @@ Power(x2,2),7));
 }
 
 FLOAT_TYPE hb2(FLOAT_TYPE x1,FLOAT_TYPE x2,FLOAT_TYPE lambdasq,UINT k1,UINT k2) {
-	FLOAT_TYPE he0 = exp(-(x1*x1+x2*x2)/lambdasq*0.5);
+	FLOAT_TYPE he0 = M_EXP(-(x1*x1+x2*x2)/lambdasq*0.5);
 	FLOAT_TYPE Pi = M_PI;
 	if ( (k1==0) && (k2==0) )
 		return (x1 - he0*x1)/(2*Pi*Power(x1,2) + 2*Pi*Power(x2,2));

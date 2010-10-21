@@ -2,11 +2,13 @@
 #include <errno.h>
 #include <string.h>
 #include "libhvs/hevosol.h"
+#include "libhvs/hermiteutil.h"
 
 int main() {
 	hvs_state* state;
 	hvs_params params;
 	int status,i;
+	FLOAT_TYPE x,y,l;
 	params.initvortfile = "test";
 	params.timestep = 0.001;
 	params.lambda0 = 1.0;
@@ -29,11 +31,11 @@ int main() {
 		hvserror(status, "Init error");
 		return 0;
 	}
-	for (i=0;i<10;i++) {
+	for (i=0;i<20;i++) {
 		params.t0 = 0.1*i;
 		params.t1 = 0.1*(i+1);
 		if ((status = run_solver(&params, state)) == HVS_OK) {
-			printf("Centers: (%.4f,%.4f),(%.4f,%.4f)\n", 
+			printf("Centers: (%.4Lf,%.4Lf),(%.4Lf,%.4Lf)\n", 
 				state->centers[0].x,state->centers[0].y,
 				state->centers[1].x,state->centers[1].y);
 			write_output(state,"test.out");
@@ -43,5 +45,11 @@ int main() {
 		}
 	}
 	free_solver(&state);
+	x=0.7;
+	y=2.301;
+	l=15.5;
+	printf("hb1(%Lf,%Lf,%Lf,3,2)=%.16Lg\n",x,y,l*l,hb1(x,y,l*l,3,2));
+	printf("hb1(%Lf,%Lf,%Lf,2,3)=%.16Lg\n",x,y,l*l,hb1(x,y,l*l,2,3));
+	printf("hb1(%Lf,%Lf,%Lf,3,3)=%.16Lg\n",x,y,l*l,hb1(x,y,l*l,3,3));
 	return 0;
 }
