@@ -3,6 +3,7 @@
 // Author: Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
 //
 
+#ifndef HEVOSOL_H
 #define HEVOSOL_H 1
 
 // Number of moments to include
@@ -33,10 +34,7 @@
 #include <unistd.h>
 
 #include "gentypes.h"
-
-#ifndef HVS_ERRORUTIL_H
 #include "errorutil.h"
-#endif
 
 typedef struct s_hvs_position {
 	FLOAT_TYPE x, y;
@@ -71,6 +69,7 @@ typedef struct {
 	UINT	size, sizex, sizey, ncenters;
 	FLOAT_TYPE	xmin, xmax, xstep;
 	FLOAT_TYPE	ymin, ymax, ystep;
+	FLOAT_TYPE	curtime;
 	hvs_position*	grid;
 	hvs_velocity*	velocity_field;
 	hvs_vorticity*	vorticity_field;
@@ -92,4 +91,5 @@ int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_centers 
 				FLOAT_TYPE ymin, FLOAT_TYPE ymax, FLOAT_TYPE ystep, hvs_state **sstate);
 void free_solver(hvs_state **sstate);
 int run_solver(const hvs_params *params, hvs_state *state);
-ssize_t write_data(const hvs_state *state, const char *filename);
+
+#endif

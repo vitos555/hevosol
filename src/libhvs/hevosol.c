@@ -150,7 +150,7 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 			state = NULL;
 			return HVS_ERR;
 		}
-	} while ((status = readdata(file,HVS_READ_BLOCK_SIZE,
+	} while ((status = read_vorticity(file,HVS_READ_BLOCK_SIZE,
 			pos+cursize*sizeof(hvs_position),
 			vort+cursize*sizeof(hvs_vorticity))) == HVS_READ_BLOCK_SIZE);
 	if (status < 0) {
@@ -159,6 +159,7 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 		return status;
 	}
 	cursize += status;
+	closefile(&file);
 	
 	state->grid = pos;
 	state->vorticity_field = vort;
@@ -186,7 +187,7 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 	state->sizex = floor(abs(state->xmax-state->xmin)/state->xstep);
 	
 	if(cursize != (state->sizex*state->sizey)) {
-		
+		return HVS_ERR;
 	}
 
 	// Initialize velocity field
@@ -261,11 +262,8 @@ int run_solver(const hvs_params *params, hvs_state *state) {
 			return status;
 		}
 	}
+	state->curtime = tn;
 	return update_vorticity_field(state, params);
-}
-
-int write_output(const hvs_state *state, const char *filename) {
-	return writedata(state, filename);
 }
 
 int checkgrid(hvs_position *pos, hvs_vorticity *vort) {

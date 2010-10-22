@@ -3,6 +3,9 @@
 // Author: Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
 //
 
+#ifndef HVS_GENTYPES_H
+#define HVS_GENTYPES_H 1
+
 // Custom types. To make further scaling easier.
 #define HVS_FLOAT 1
 #define HVS_DOUBLE 2
@@ -36,4 +39,6 @@
 #else
 #define M_EXP(x) exp((x))
 #define M_POW(x,y) pow((x),(y))
+#endif
+
 #endif

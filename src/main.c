@@ -2,7 +2,12 @@
 #include <errno.h>
 #include <string.h>
 #include "libhvs/hevosol.h"
+#include "libhvs/fileutil.h"
 #include "libhvs/hermiteutil.h"
+
+#define SQRT_NCENTERS 9
+#define NCENTERS SQRT_NCENTERS*SQRT_NCENTERS
+#define OUTFILE "test.out"
 
 int main() {
 	hvs_state* state;
@@ -13,32 +18,30 @@ int main() {
 	params.timestep = 0.001;
 	params.lambda0 = 1.0;
 	params.nu = 0.1;
-	hvs_center centers[] = {{-1.0,0.0},{1.0,0.0}};
-	hvs_moment moment1;
-	moment1[0] = 1.0;
-	moment1[1] = 0.0;
-	moment1[2] = 0.0;
-	moment1[3] = 0.0;
-	moment1[4] = 0.0;
-	moment1[5] = 0.0;
-	hvs_moment moment2 = {1.0,0.0,0.0,0.0,0.0,0.0};
-	hvs_moment moments[2];
-	memcpy(moments[0],moment1,sizeof(hvs_moment));
-	memcpy(moments[1],moment2,sizeof(hvs_moment));
-	if ((status = init_solver_by_moments(&params, 2, centers, moments,
+	hvs_center centers[NCENTERS];
+	hvs_moment moment1 = {1.0/NCENTERS,0.0,0.0,0.0,0.0,0.0};
+	hvs_moment moments[NCENTERS];
+	for(i=0;i<NCENTERS;i++) {
+		memcpy(moments[i],moment1,sizeof(hvs_moment));
+		centers[i].x=-2.0+4.0/(SQRT_NCENTERS-1)*(i%(SQRT_NCENTERS));
+		centers[i].y=-2.0+4.0/(SQRT_NCENTERS-1)*(i/(SQRT_NCENTERS));
+		printf("Center[%d] = (%Lf,%Lf)\n",i,centers[i].x,centers[i].y);
+	}
+	if ((status = init_solver_by_moments(&params, NCENTERS, centers, moments,
 				-5.0, 5.0, 0.1, 
 				-5.0, 5.0, 0.1, &state)) != HVS_OK) {
 		hvserror(status, "Init error");
 		return 0;
 	}
-	for (i=0;i<20;i++) {
+	write_params(&params,OUTFILE);
+	for (i=0;i<10;i++) {
 		params.t0 = 0.1*i;
 		params.t1 = 0.1*(i+1);
 		if ((status = run_solver(&params, state)) == HVS_OK) {
 			printf("Centers: (%.4Lf,%.4Lf),(%.4Lf,%.4Lf)\n", 
 				state->centers[0].x,state->centers[0].y,
 				state->centers[1].x,state->centers[1].y);
-			write_output(state,"test.out");
+//			if (i%10==0) append_vorticity(state,OUTFILE);
 		} else {
 			hvserror(status,"Run error");
 			break;
