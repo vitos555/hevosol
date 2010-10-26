@@ -8,17 +8,29 @@
 
 // Number of moments to include
 #define NMOMENTS 2
-#define NMOMENTS_2 4
-#define NMOMENTS_3 8
-#define NMOMENTS_4 16
-#define NMOMENTS_5 32
-#define NMOMENTS_6 64
-#define NMOMENTS_7 128
-#define NMOMENTS_8 256
-#define NMOMENTS_9 512
-#define NMOMENTS_10 1024
+#define NMOMENTS_1 3
+#define NMOMENTS_2 9
+#define NMOMENTS_3 27
+#define NMOMENTS_4 81
+#define NMOMENTS_5 243
+#define NMOMENTS_6 729
+#define NMOMENTS_7 2187
+#define NMOMENTS_8 6561
+#define NMOMENTS_9 19683
+#define NMOMENTS_10 59049 
+// Number of combinations of moments
+#define NCOMBS (NMOMENTS+1)*(NMOMENTS+2)/2
+// Combination index:
+// 0 -> (0,0)
+// 1 -> (1,0)
+// 2 -> (0,1)
+// 3 -> (2,0)
+// 4 -> (1,1)
+// 5 -> (0,2)
+#define COMBS_IND1(i) ((i)==0?0:((i)==1?1:((i)==2?0:((i)==3?2:((i)==4?1:((i)==5?0:0))))))
+#define COMBS_IND2(i) ((i)==0?0:((i)==1?0:((i)==2?1:((i)==3?0:((i)==4?1:((i)==5?2:0))))))
 
-#define MOMENTS_LEN 6
+#define MOMENTS_LEN NCOMBS
 
 #define MIN(a,b) ((a)>(b)?(b):(a))
 #define POWN1(a) ((a)%2==0?1:-1)
@@ -28,7 +40,7 @@
 #define COEF_INDEX(k1,k2,l1,l2,m1,m2,i,j) ((k1)*NMOMENTS_7+(k2)*NMOMENTS_6+\
 	(l1)*NMOMENTS_5+(l2)*NMOMENTS_4+\
 	(m1)*NMOMENTS_3+(m2)*NMOMENTS_2+\
-	(i)*NMOMENTS+(j))
+	(i)*NMOMENTS_1+(j))
 #define MOM_INDEX(i,j) (((i)+(j))*((i)+(j)+1)/2+(j))
 
 #include <unistd.h>
@@ -70,6 +82,7 @@ typedef struct {
 	FLOAT_TYPE	xmin, xmax, xstep;
 	FLOAT_TYPE	ymin, ymax, ystep;
 	FLOAT_TYPE	curtime;
+	FLOAT_TYPE	lambdasq;
 	hvs_position*	grid;
 	hvs_velocity*	velocity_field;
 	hvs_vorticity*	vorticity_field;

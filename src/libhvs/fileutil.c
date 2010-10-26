@@ -52,7 +52,7 @@ ssize_t write_vorticity(const hvs_state *state, const char *filename) {
 #else
 	fprintf(fh,"%f",state->curtime);
 #endif
-	fprintf(fh,"=Data=\n");
+	fprintf(fh,"=Vorticity x	y	vorticity=\n");
 	while(writecount<state->size) {
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
 		fprintf(fh, "%Lf\t%Lf\t%.18Lf\n", state->grid[writecount].x, state->grid[writecount].y, state->vorticity_field[writecount]);
@@ -77,7 +77,7 @@ ssize_t append_vorticity(const hvs_state *state, const char *filename) {
 #else
 	fprintf(fh,"%f\n",state->curtime);
 #endif
-	fprintf(fh,"=Data=\n");
+	fprintf(fh,"=Vorticity x	y	vorticity=\n");
 	while(writecount<state->size) {
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
 		fprintf(fh, "%Lf\t%Lf\t%.18Lf\n", state->grid[writecount].x, state->grid[writecount].y, state->vorticity_field[writecount]);
@@ -119,6 +119,109 @@ ssize_t append_params(const hvs_params *params, const char *filename) {
 	fprintf(fh,"lambda=%f,nu=%f\n",params->lambda0,params->nu);
 #endif
 	writecount+=2;
+	fclose(fh);
+	return writecount;
+}
+
+ssize_t write_moments(const hvs_state *state, const char *filename) {
+	int writecount = 0;
+	int i0;
+	FILE *fh;
+	if ((fh = fopen(filename, "w+")) == NULL) {
+		return HVS_ERR;
+	}
+	fprintf(fh,"=Moments (0,0)	(2,0)	(1,1)	(0,2) =\n");
+	for(i0=0;i0<state->ncenters;i0++) {
+#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
+	fprintf(fh,"%Lf\t%Lf\t%Lf\t%Lf\n",
+		state->moments[i0][MOM_INDEX(0,0)],
+		state->moments[i0][MOM_INDEX(2,0)],
+		state->moments[i0][MOM_INDEX(1,1)],
+		state->moments[i0][MOM_INDEX(0,2)]);
+#else
+	fprintf(fh,"%Lf\t%Lf\t%Lf\t%Lf\n",
+		state->moments[i0][MOM_INDEX(0,0)],
+		state->moments[i0][MOM_INDEX(2,0)],
+		state->moments[i0][MOM_INDEX(1,1)],
+		state->moments[i0][MOM_INDEX(0,2)]);
+#endif
+	writecount+=1;
+	}
+	fclose(fh);
+	return writecount;
+}
+ssize_t append_moments(const hvs_state *state, const char *filename) {
+	int writecount = 0;
+	int i0;
+	FILE *fh;
+	if ((fh = fopen(filename, "a+")) == NULL) {
+		return HVS_ERR;
+	}
+	fprintf(fh,"=Moments (0,0)	(2,0)	(1,1)	(0,2) =\n");
+	for(i0=0;i0<state->ncenters;i0++) {
+#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
+	fprintf(fh,"%Lf\t%Lf\t%Lf\t%Lf\n",
+		state->moments[i0][MOM_INDEX(0,0)],
+		state->moments[i0][MOM_INDEX(2,0)],
+		state->moments[i0][MOM_INDEX(1,1)],
+		state->moments[i0][MOM_INDEX(0,2)]);
+#else
+	fprintf(fh,"%f\t%f\t%f\t%f\n",
+		state->moments[i0][MOM_INDEX(0,0)],
+		state->moments[i0][MOM_INDEX(2,0)],
+		state->moments[i0][MOM_INDEX(1,1)],
+		state->moments[i0][MOM_INDEX(0,2)]);
+#endif
+	writecount+=1;
+	}
+	fclose(fh);
+	return writecount;
+}
+
+ssize_t write_centers(const hvs_state *state, const char *filename) {
+	int writecount = 0;
+	int i0;
+	FILE *fh;
+	if ((fh = fopen(filename, "w+")) == NULL) {
+		return HVS_ERR;
+	}
+	fprintf(fh,"=Centers x	y=\n");
+	for(i0=0;i0<state->ncenters;i0++) {
+#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
+	fprintf(fh,"%Lf\t%Lf\n",
+		state->centers[i0].x,
+		state->centers[i0].y);
+#else
+	fprintf(fh,"%Lf\t%Lf\n",
+		state->centers[i0].x,
+		state->centers[i0].y);
+#endif
+	writecount+=1;
+	}
+	fclose(fh);
+	return writecount;
+}
+ssize_t append_centers(const hvs_state *state, const char *filename) {
+	int writecount = 0;
+	int i0;
+	FILE *fh;
+	if ((fh = fopen(filename, "a+")) == NULL) {
+		return HVS_ERR;
+	}
+
+	fprintf(fh,"=Centers x	y=\n");
+	for(i0=0;i0<state->ncenters;i0++) {
+#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
+	fprintf(fh,"%Lf\t%Lf\n",
+		state->centers[i0].x,
+		state->centers[i0].y);
+#else
+	fprintf(fh,"%Lf\t%Lf\n",
+		state->centers[i0].x,
+		state->centers[i0].y);
+#endif
+	writecount+=1;
+	}
 	fclose(fh);
 	return writecount;
 }

@@ -26,6 +26,7 @@ int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_centers 
 	if (state == NULL)
 		return HVS_ERR;
 	state->ncenters = ncenters;
+	state->lambdasq = params->lambda0*params->lambda0;
 	
 	state->centers = (hvs_center *) malloc(sizeof(hvs_center)*ncenters);
 	if(state->centers == NULL) {
@@ -214,6 +215,8 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 	}
 	memset(state->coefs, 0, sizeof(hvs_coefs));
 	init_coefs(state->coefs);
+
+	state->lambdasq = params->lambda0*params->lambda0;
 
 	*sstate = state;
 	return HVS_OK;

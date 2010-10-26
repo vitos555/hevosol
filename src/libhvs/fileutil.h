@@ -23,5 +23,9 @@ ssize_t write_vorticity(const hvs_state *state, const char *filename);
 ssize_t append_vorticity(const hvs_state *state, const char *filename);
 ssize_t write_params(const hvs_params *params, const char *filename);
 ssize_t append_params(const hvs_params *params, const char *filename);
+ssize_t write_moments(const hvs_state *state, const char *filename);
+ssize_t append_moments(const hvs_state *state, const char *filename);
+ssize_t write_centers(const hvs_state *state, const char *filename);
+ssize_t append_centers(const hvs_state *state, const char *filename);
 
 #endif
