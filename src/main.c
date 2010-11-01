@@ -1,18 +1,20 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <time.h>
 #include "libhvs/hevosol.h"
 #include "libhvs/fileutil.h"
 #include "libhvs/hermiteutil.h"
 
-#define SQRT_NCENTERS 9
+#define SQRT_NCENTERS 7
 #define NCENTERS SQRT_NCENTERS*SQRT_NCENTERS
-#define OUTFILE "test.out"
+#define OUTFILE "main.out"
 
 int main() {
 	hvs_state* state;
 	hvs_params params;
 	int status,i;
+	time_t starttime,endtime;
 	FLOAT_TYPE x,y,l;
 	params.initvortfile = "test";
 	params.timestep = 0.001;
@@ -27,6 +29,7 @@ int main() {
 		centers[i].y=-2.0+4.0/(SQRT_NCENTERS-1)*(i/(SQRT_NCENTERS));
 		printf("Center[%d] = (%Lf,%Lf)\n",i,centers[i].x,centers[i].y);
 	}
+	starttime = time(NULL);
 	if ((status = init_solver_by_moments(&params, NCENTERS, centers, moments,
 				-5.0, 5.0, 0.1, 
 				-5.0, 5.0, 0.1, &state)) != HVS_OK) {
@@ -48,11 +51,13 @@ int main() {
 		}
 	}
 	free_solver(&state);
+	endtime = time(NULL);
 	x=0.7;
 	y=2.301;
 	l=15.5;
 	printf("hb1(%Lf,%Lf,%Lf,3,2)=%.16Lg\n",x,y,l*l,hb1(x,y,l*l,3,2));
 	printf("hb1(%Lf,%Lf,%Lf,2,3)=%.16Lg\n",x,y,l*l,hb1(x,y,l*l,2,3));
 	printf("hb1(%Lf,%Lf,%Lf,3,3)=%.16Lg\n",x,y,l*l,hb1(x,y,l*l,3,3));
+	printf("Time: %d sec\n",endtime-starttime);
 	return 0;
 }

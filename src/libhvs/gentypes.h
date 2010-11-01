@@ -12,7 +12,9 @@
 #define HVS_LONG_DOUBLE 3
 
 // Change this constant to change float type
+#ifndef HVS_FLOAT_TYPE
 #define HVS_FLOAT_TYPE HVS_LONG_DOUBLE
+#endif
 
 // Initialize float type
 #if HVS_FLOAT_TYPE==HVS_FLOAT
@@ -33,12 +35,15 @@
 #if HVS_FLOAT_TYPE==HVS_FLOAT
 #define M_EXP(x) expf((x))
 #define M_POW(x,y) powf((x),(y))
+#define M_SQRT(x) sqrtf((x))
 #elif HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
 #define M_EXP(x) expl((x))
 #define M_POW(x,y) powl((x),(y))
+#define M_SQRT(x) sqrtl((x))
 #else
 #define M_EXP(x) exp((x))
 #define M_POW(x,y) pow((x),(y))
+#define M_SQRT(x) sqrt((x))
 #endif
 
 #endif
