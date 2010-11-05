@@ -1,17 +1,18 @@
 #include "matrixutil.h"
 #include "errorutil.h"
+#include <stdlib.h>
 
-int matrix_multiply(const FLOAT_TYPE *m1, UINT m1, UINT n1, 
-			const FLOAT_TYPE *m2, UINT m2, UINT n2, FLOAT_TYPE *result) {
+int matrix_multiply(const FLOAT_TYPE *A1, UINT m1, UINT n1, 
+			const FLOAT_TYPE *A2, UINT m2, UINT n2, FLOAT_TYPE *result) {
 	return HVS_OK;
 }
 
-int matrix_add(const FLOAT_TYPE *m1, const FLOAT_TYPE *m2,
+int matrix_add(const FLOAT_TYPE *A1, const FLOAT_TYPE *A2,
 		UINT m, UINT n, FLOAT_TYPE *result) {
 	UINT i,j;
 	for (i=0;i<m;i++)
 		for(j=0;j<n;j++)
-			result[i*n+j]=m1[i*n+j]+m2[i*n+j];
+			result[i*n+j]=A1[i*n+j]+A2[i*n+j];
 	return HVS_OK;
 }
 
@@ -25,18 +26,19 @@ int matrix_scalarmult(const FLOAT_TYPE scalar, const FLOAT_TYPE *m1,
 }
 
 int matrix_inv(const FLOAT_TYPE *m, UINT n, FLOAT_TYPE *result) {
-	UINT i,j;
+	UINT i,j,k;
 	UINT *l1,*l2;
+	FLOAT_TYPE *m1;
 	
 	if ((l1=malloc(n*sizeof(UINT)))==NULL) {
 		return HVS_ERR;
 	}
 	memset(l1,n*sizeof(UINT),0);
-	if ((l2=malloc(n*sizeof(bute)))==NULL) {
+	if ((l2=malloc(n*sizeof(short int)))==NULL) {
 		free(l1);
 		return HVS_ERR;
 	}
-	memset(l2,n*sizeof(bute),0);
+	memset(l2,n*sizeof(short int),0);
 	if ((m1=malloc(n*n*sizeof(FLOAT_TYPE)))==NULL) {
 		free(l1);
 		free(l2);
@@ -59,7 +61,7 @@ int matrix_inv(const FLOAT_TYPE *m, UINT n, FLOAT_TYPE *result) {
 			}
 		if (max>0) {
 			for (j=0;j<n;j++) {
-				if (l2[j] && (j!=l1[i]) continue;
+				if (l2[j] && (j!=l1[i])) continue;
 				for(k=0;k<n;k++) {
 					if (j==l1[i]) {
 						if (k>=i) m1[j*n+k]=m1[j*n+k]/max;

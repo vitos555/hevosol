@@ -2,6 +2,9 @@
 // Copyright (C) 2010, Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
 // Author: Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
 //
+#if HVS_DEBUG>2
+#include <stdio.h>
+#endif
 
 int init_ode_data(hvs_ode_data *data, hvs_state *input) {
 	data->ncenters = input->ncenters;
