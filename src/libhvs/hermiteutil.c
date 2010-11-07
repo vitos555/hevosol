@@ -2,6 +2,10 @@
 #include "factorialutil.h"
 #include <math.h>
 
+#if HVS_DEBUG
+#include<stdio.h>
+#endif
+
 #define PI_INV 1/M_PI
 
 #if NMOMENTS > 2
@@ -668,7 +672,9 @@ Power(x2,2),5)*(Power(x1,10) - 55*Power(x1,8)*Power(x2,2) + \
 Power(x2,10))))/(2.*Power(lambdasq,10)*Pi*Power(Power(x1,2) + \
 Power(x2,2),11));
 	else {
+#if HVS_DEBUG
 		printf("Err:%d,%d\n",k1,k2);
+#endif
 		return 0.0;
 	}
 }
@@ -1251,7 +1257,9 @@ Power(x2,2),5)*(11*Power(x1,10) - 165*Power(x1,8)*Power(x2,2) + \
 Power(x2,10))))/(2.*Power(lambdasq,10)*Pi*Power(Power(x1,2) + \
 Power(x2,2),11));
 	else {
+#if HVS_DEBUG
 		printf("Err:%d,%d\n",k1,k2);
+#endif
 		return 0.0;
 	}
 }

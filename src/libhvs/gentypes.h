@@ -36,14 +36,17 @@
 #define M_EXP(x) expf((x))
 #define M_POW(x,y) powf((x),(y))
 #define M_SQRT(x) sqrtf((x))
+#define M_ABS(x) fabsf((x))
 #elif HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
 #define M_EXP(x) expl((x))
 #define M_POW(x,y) powl((x),(y))
 #define M_SQRT(x) sqrtl((x))
+#define M_ABS(x) fabsl((x))
 #else
 #define M_EXP(x) exp((x))
 #define M_POW(x,y) pow((x),(y))
 #define M_SQRT(x) sqrt((x))
+#define M_ABS(x) fabs((x))
 #endif
 
 #endif

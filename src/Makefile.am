@@ -1,10 +1,16 @@
-bin_PROGRAMS = solver test
+bin_PROGRAMS = solver
+check_PROGRAMS = testsolver testmatrixutil testgmres
 
 solver_SOURCES = main.c
 solver_LDADD = libhvs-0.1.la
 
-test_SOURCES = test.c
-test_LDADD = libhvs-0.1.la
+testsolver_SOURCES = test/test_solver.c
+testsolver_LDADD = libhvs-0.1.la
+testmatrixutil_SOURCES = test/test_matrixutil.c
+testmatrixutil_LDADD = libhvs-0.1.la
+testgmres_SOURCES = test/test_gmres.c
+testgmres_LDADD = libhvs-0.1.la
+
 
 lib_LTLIBRARIES = libhvs-0.1.la
 

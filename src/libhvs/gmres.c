@@ -5,16 +5,21 @@
 #include <stdlib.h>
 
 int gmres(const FLOAT_TYPE *A, const FLOAT_TYPE *x0, const FLOAT_TYPE *b, UINT size,
-		FLOAT_TYPE accuracy, FLOAT_TYPE *result) {
+		FLOAT_TYPE accuracy, UINT restart, FLOAT_TYPE *result) {
 	FLOAT_TYPE beta;
 	FLOAT_TYPE residualsq;
-	FLOAT_TYPE *betae = NULL,*yn = NULL,*bnorm = NULL;
+	FLOAT_TYPE *betae = NULL,*yn = NULL,*bnorm = NULL, *tmp = NULL;
 	FLOAT_TYPE *H = NULL,*Q = NULL;
 	
 	int status;
-	UINT n,i;
+	UINT n,i,globaln=0;
 	
 	if ((bnorm = malloc(sizeof(FLOAT_TYPE)*size))==NULL) {
+		return HVS_ERR;
+	}
+	
+	if ((tmp = malloc(sizeof(FLOAT_TYPE)*size))==NULL) {
+		free(bnorm);
 		return HVS_ERR;
 	}
 
@@ -23,85 +28,130 @@ int gmres(const FLOAT_TYPE *A, const FLOAT_TYPE *x0, const FLOAT_TYPE *b, UINT s
 		return status;
 	}
 	
-	if((status = vect_matrixmultsub(A,x0,bnorm,size,result))!=HVS_OK) {
-		return status;
-	}
-	beta = M_SQRT(vect_normsq(result,size));
-
 	// Initialize result with x0, residualsq to be bigger then accuracy
 	memcpy(result,x0,sizeof(FLOAT_TYPE)*size);
 	residualsq = 2*accuracy*accuracy;
-	n = 0;
 
-	while((residualsq>(accuracy*accuracy)) && (n<MAX_GMRES_ITERATIONS)) {
-		n++;
-		if ((betae = realloc(betae,sizeof(FLOAT_TYPE)*(n+1)))==NULL) {
-			free(bnorm);
-			return HVS_ERR;
-		}
-		if ((yn = realloc(yn,sizeof(FLOAT_TYPE)*n))==NULL) {
-			free(betae);
-			free(bnorm);
-			return HVS_ERR;
-		}
-		if ((H = realloc(H,sizeof(FLOAT_TYPE)*(n+1)*n))==NULL) {
-			free(betae);
-			free(bnorm);
-			free(yn);
-			return HVS_ERR;
-		}
-		if ((Q = realloc(Q,sizeof(FLOAT_TYPE)*size*n))==NULL) {
-			free(betae);
-			free(bnorm);
-			free(yn);
-			free(H);
-			return HVS_ERR;
-		}
-		memset(H,sizeof(FLOAT_TYPE)*(n+1)*n,0);
-		memset(betae,sizeof(FLOAT_TYPE)*(n+1),0);
-		betae[0]=beta;
-		
-		// One step Arnoldi
-		if ((status = arnoldi(A,b,size,n,H,Q))!=HVS_OK) {
+	while((residualsq>(accuracy*accuracy)) && (globaln<MAX_GMRES_RESTARTS)) {
+		globaln++;
+		if((status = vect_matrixmultsub(A,result,bnorm,size,tmp))!=HVS_OK) {
 			return status;
 		}
+		beta = M_SQRT(vect_normsq(tmp,size));
+		n = 0;
 		
-		// Now OLS
-		if ((status = ols(H,betae,n+1,n,yn))!=HVS_OK) {
-			return status;
-		}
+		while((residualsq>(accuracy*accuracy)) && (n<restart)) {
+			n++;
+			if (globaln==1) {
+				if ((betae = realloc(betae,sizeof(FLOAT_TYPE)*(n+1)))==NULL) {
+					free(bnorm);
+					return HVS_ERR;
+				}
+				if ((yn = realloc(yn,sizeof(FLOAT_TYPE)*n))==NULL) {
+					free(betae);
+					free(bnorm);
+					free(tmp);
+					return HVS_ERR;
+				}
+				if ((H = realloc(H,sizeof(FLOAT_TYPE)*(n+1)*n))==NULL) {
+					free(betae);
+					free(bnorm);
+					free(tmp);
+					free(yn);
+					return HVS_ERR;
+				}
+				if ((Q = realloc(Q,sizeof(FLOAT_TYPE)*size*n))==NULL) {
+					free(betae);
+					free(bnorm);
+					free(tmp);
+					free(yn);
+					free(H);
+					return HVS_ERR;
+				}
+			}
+			memset(H,0,sizeof(FLOAT_TYPE)*(n+1)*n);
+			memset(betae,0,sizeof(FLOAT_TYPE)*(n+1));
+			betae[0]=beta;
+
+			// One step Arnoldi
+			if ((status = arnoldi(A,b,size,n,H,Q))!=HVS_OK) {
+				return status;
+			}
+			// Now OLS
+			if ((status = ols(H,betae,n+1,n,yn))!=HVS_OK) {
+				return status;
+			}
 		
-		// Get rn into result
-		for(i=0;i<n+1;i++) {
-			result[i] = vect_dotproduct(&H[i*n],yn,n)-betae[i];
+			// Get rn into result
+			for(i=0;i<n+1;i++) {
+				result[i] = vect_dotproduct(&H[i*n],yn,n)-betae[i];
+			}
+			residualsq = vect_normsq(result,n+1);
+			printf("Residual: %Lf\n",residualsq);
 		}
-		residualsq = vect_normsq(result,n+1);
-		printf("Residual: %Lf\n",residualsq);
-	}
 	
-	// Get xn
-	for(i=0;i<size;i++) {
-		result[i]=M_SQRT(vect_normsq(b,size))*vect_dotproduct(&Q[i*n],yn,n);
+		// Get xn
+		for(i=0;i<size;i++) {
+			result[i]=M_SQRT(vect_normsq(b,size))*vect_dotproduct(&Q[i*n],yn,n);
+		}
 	}
 	free(H);
 	free(Q);
 	free(yn);
 	free(betae);
+	free(tmp);
 	free(bnorm);
 	return HVS_OK;
 }
 
 int ols(const FLOAT_TYPE *X, const FLOAT_TYPE *y, UINT m, UINT n, FLOAT_TYPE *result) {
 	FLOAT_TYPE inv_factor=0.0;
-	UINT i,j;
+	FLOAT_TYPE *xx,*inv;
+	UINT i,j,k;
 	int status;
+	
 	for(i=0;i<n;i++) {
-		for(j=0;j<m;j++) inv_factor += vect_normsq(&X[i*n],n);
+		for(j=0;j<m;j++)
+			printf("%Lf\t",X[i*n+j]);
+		printf("\n");
+	}
+	printf("\n");
+
+	if ((inv=malloc(sizeof(FLOAT_TYPE)*n*n))==NULL) {
+		return HVS_ERR;
+	}
+	if ((xx=malloc(sizeof(FLOAT_TYPE)*n*n))==NULL) {
+		free(inv);
+		return HVS_ERR;
+	}
+	
+	// Build X'X
+	for(i=0;i<n;i++) {
+		for(j=0;j<n;j++) {
+			xx[i*n+j]=0;
+			for (k=0;k<m;k++) 
+				xx[i*n+j] = X[i*n+k]*X[j*n+k];
+		}
 		result[i] = 0;
 	}
-	inv_factor = 1/inv_factor;
-	for(i=0;i<m;i++) 
-		for(j=0;j<n;j++) result[i] += X[i*n+j]*inv_factor*y[j];
+	
+	for(i=0;i<n;i++) {
+		for(j=0;j<n;j++)
+			printf("%Lf\t",xx[i*n+j]);
+		printf("\n");
+	}
+	// Find inverse
+	if((status=matrix_inv(xx,n,inv))!=HVS_OK) {
+		return status;
+	}
+	
+			printf("Here\n");
+	for(i=0;i<n;i++)
+		for(j=0;j<m;j++)
+			for (k=0;k<n;k++)
+				result[i] += inv[k*n+i]*X[j*n+k]*y[j];
+	free(inv);
+	free(xx);
 	return HVS_OK;
 }
 
