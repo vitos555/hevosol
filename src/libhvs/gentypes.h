@@ -13,7 +13,7 @@
 
 // Change this constant to change float type
 #ifndef HVS_FLOAT_TYPE
-#define HVS_FLOAT_TYPE HVS_LONG_DOUBLE
+#define HVS_FLOAT_TYPE HVS_DOUBLE
 #endif
 
 // Initialize float type
