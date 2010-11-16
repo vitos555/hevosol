@@ -48,6 +48,42 @@ int update_vorticity_field(hvs_state *state, const hvs_params *params) {
 	return HVS_OK;
 }
 
+int init_moments(hvs_state *state) {
+	FLOAT_TYPE *A,*x;
+	UINT i,j,k;
+	int status;
+	if (state->size!=state->ncenters) {
+		return HVS_ERR;
+	}
+	if ((A=malloc(sizeof(FLOAT_TYPE)*state->size*state->size))==NULL) {
+		return HVS_ERR;
+	}
+	if ((x=malloc(sizeof(FLOAT_TYPE)*state->size))==NULL) {
+		free(A);
+		return HVS_ERR;
+	}
+	memset(x,0,sizeof(FLOAT_TYPE)*state->size);
+	for(i=0;i<state->size;i++)
+		for(j=0;j<state->size;j++)
+				A[state->size*i+j] = 
+					he(state->grid[i].x-state->centers[j].x,
+					   state->grid[i].y-state->centers[j].y,
+					   state->lambdasq,
+					   0,0);
+	if ((status=gmres(A,x,state->vorticity_field,state->size,0.0001,20,x))!=HVS_OK) {
+		free(A);
+		free(x);
+		return status;
+	}
+	// Get moments
+	for(i=0;i<state->ncenters;i++) {
+		state->moments[i][0]=x[i];
+	}
+	free(A);
+	free(x);
+	return HVS_OK;
+}
+
 int eval_eq(hvs_ode_data *input, hvs_ode_data *output, hvs_coefs *coefs, FLOAT_TYPE time) {
 	FLOAT_TYPE lambdasq = input->lambdasq;
 	FLOAT_TYPE gamma1,gamma2;

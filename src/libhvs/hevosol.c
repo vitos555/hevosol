@@ -130,6 +130,8 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 	UINT cursize = 0;
 	if (state == NULL) 
 		return HVS_ERR;
+	if (params->initvortfile==NULL)
+		return HVS_ERR_WRONG_USAGE;
 
 	// Init file handler
 	if (initfile(params->initvortfile, &file)) {
@@ -164,13 +166,66 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 	
 	state->grid = pos;
 	state->vorticity_field = vort;
-	state->moments = NULL;
-	state->centers = NULL;
+	state->ncenters = 0;
+	state->lambdasq = params->lambda0*params->lambda0;
+	
+	// Read initial centers positions
+	if(params->initcentersfile!=NULL) {
+		if((status=initfile(params->initcentersfile, &file))==HVS_OK) {
+			do {
+				state->ncenters += status;
+				if ((pos = (hvs_position *)realloc(state->centers, (state->ncenters+HVS_READ_BLOCK_SIZE)*sizeof(hvs_center)))==NULL) {
+					free(state->grid);
+					free(state);
+					state = NULL;
+					return HVS_ERR;
+				}
+			} while ((status = read_centers(file,HVS_READ_BLOCK_SIZE,
+					&pos[cursize])) == HVS_READ_BLOCK_SIZE);
+			if (status < 0) {
+				free(state->grid);
+				free(state->vorticity_field);
+				free(state);
+				state = NULL;
+				return status;
+			}
+			closefile(&file);
+		} else {
+			free(state->grid);
+			free(state->vorticity_field);
+			free(state);
+			state = NULL;
+			return status;
+		}
+	}
+	// If there is no initcentersfile then centers coinside with grid
+	if (state->ncenters==0) {
+		if ((state->centers = malloc(sizeof(hvs_position)*cursize)) == NULL) {
+			free(state->grid);
+			free(state->vorticity_field);
+			free(state);
+			return HVS_ERR;
+		}
+		memcpy(state->centers,state->grid,sizeof(hvs_position)*cursize);
+		state->ncenters = cursize;
+	}
+	
+	// Allocate memory for moments
+	if ((state->moments = malloc(sizeof(hvs_moment)*state->ncenters))==NULL) {
+		free(state->centers);
+		free(state->vorticity_field);
+		free(state->grid);
+		free(state);
+		return HVS_ERR;
+	}
+	memset(state->moments,0,sizeof(hvs_moment)*state->ncenters);
 	
 	// Check if we have regular grid
 	if (checkgrid(pos) != HVS_OK) {
-		free(pos);
-		free(vort);
+		free(state->centers);
+		free(state->moments);
+		free(state->vorticity_field);
+		free(state->grid);
 		free(state);
 		return HVS_ERR_IRREGULAR_GRID;
 	}
@@ -178,24 +233,33 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 	// Copy values to the state structure
 	state->size = cursize;
 	
-	state->xmin = pos[0].x;
-	state->xmax = pos[cursize].x;
-	state->ymin = pos[0].y;
-	state->ymax = pos[cursize].y;
-	state->ystep = pos[1].y-pos[0].y;
-	state->sizey = floor(abs(state->ymax-state->ymin)/state->ystep);
-	state->xstep = pos[state->sizey].x-pos[0].x;
-	state->sizex = floor(abs(state->xmax-state->xmin)/state->xstep);
+	state->xmin = MIN(pos[0].x,pos[cursize-1].x);
+	state->xmax = MAX(pos[0].x,pos[cursize-1].x);
+	state->ymin = MIN(pos[0].y,pos[cursize-1].y);
+	state->ymax = MAX(pos[0].y,pos[cursize-1].y);
+	state->ystep = M_ABS(pos[1].y-pos[0].y);
+	state->sizey = floor((state->ymax-state->ymin)/state->ystep)+1;
+	state->xstep = M_ABS(pos[state->sizey].x-pos[0].x);
+	state->sizex = floor((state->xmax-state->xmin)/state->xstep)+1;
 	
 	if(cursize != (state->sizex*state->sizey)) {
+		free(state->centers);
+		free(state->moments);
+		free(state->vorticity_field);
+		free(state->grid);
+		free(state);
 		return HVS_ERR;
 	}
+
+	init_moments(state);
 
 	// Initialize velocity field
 	state->velocity_field = (hvs_vector *) malloc(cursize*sizeof(hvs_vector));
 	if (state->velocity_field == NULL) {
-		free(pos);
-		free(vort);
+		free(state->centers);
+		free(state->moments);
+		free(state->vorticity_field);
+		free(state->grid);
 		free(state);
 		state = NULL;
 		return HVS_ERR;
@@ -272,3 +336,4 @@ int run_solver(const hvs_params *params, hvs_state *state) {
 int checkgrid(hvs_position *pos, hvs_vorticity *vort) {
 	return HVS_OK;
 }
+

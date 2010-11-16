@@ -1,60 +1,124 @@
 #include <stdio.h>
 #include <errno.h>
+#include <stdlib.h>
+#include <ctype.h>
 #include <string.h>
 #include <time.h>
 #include "libhvs/hevosol.h"
 #include "libhvs/fileutil.h"
 #include "libhvs/hermiteutil.h"
 
-#define SQRT_NCENTERS 7
-#define NCENTERS SQRT_NCENTERS*SQRT_NCENTERS
+void usage(FILE *fh,const char **argv);
 
-// Output the result to file
-#define OUTFILE "main.out"
-
-int main() {
+int main(int argc, char **argv) {
 	hvs_state* state;
 	hvs_params params;
-	int status,i;
+	int status,i,c,index,quiet=0,reqargs=0;
+	char *outfile=NULL;
+	float t;
 	time_t starttime,endtime;
-	FLOAT_TYPE x,y,l;
-	params.initvortfile = "test"; // File with initial vorticity field, not used at the moment
-	params.timestep = 0.001;
-	params.lambda0 = 1.0;
-	params.nu = 0.1;
-	hvs_center centers[NCENTERS];
-	hvs_moment moment1 = {1.0/NCENTERS,0.0,0.0,0.0,0.0,0.0}; // Initial moments
-	hvs_moment moments[NCENTERS];
-	// In the loop copy moment to the array moments
-	for(i=0;i<NCENTERS;i++) {
-		memcpy(moments[i],moment1,sizeof(hvs_moment));
-		centers[i].x=-2.0+4.0/(SQRT_NCENTERS-1)*(i%(SQRT_NCENTERS));
-		centers[i].y=-2.0+4.0/(SQRT_NCENTERS-1)*(i/(SQRT_NCENTERS));
-		printf("Center[%d] = (%Lf,%Lf)\n",i,centers[i].x,centers[i].y);
+	memset(&params,0,sizeof(hvs_params));
+	// Default values of the parameters
+	params.nu=(FLOAT_TYPE)0.1;
+	params.lambda0=(FLOAT_TYPE)1.0;
+	params.timestep=(FLOAT_TYPE)0.01;
+	params.t0=(FLOAT_TYPE)0.0;
+	params.t1=(FLOAT_TYPE)1.0;
+	params.initvortfile = NULL;
+	params.initcentersfile = NULL;
+	params.initmomentsfile = NULL;
+
+	opterr = 0; 
+	while ((c = getopt (argc, argv, "hqv::c::t:l:n:b:e:m::o:")) != -1)
+		switch (c)
+		{
+		case 'v':
+			params.initvortfile = optarg;
+			reqargs = 1;
+			break;
+		case 'm':
+			params.initmomentsfile = optarg;
+			break;
+		case 'o':
+			outfile = optarg;
+			break;
+		case 't':
+			sscanf(optarg,"%f",&t);
+			params.timestep=t;
+			break;
+		case 'l':
+			sscanf(optarg,"%f",&t);
+			params.lambda0=t;
+			break;
+		case 'n':
+			sscanf(optarg,"%f",&t);
+			params.nu=t;
+			break;
+		case 'b':
+			sscanf(optarg,"%f",&t);
+			params.t0=t;
+			break;
+		case 'e':
+			sscanf(optarg,"%f",&t);
+			params.t1=t;
+			break;
+		case 'h':
+			usage(stdout,argv);
+			return 0;
+		case 'q':
+			quiet = 1;
+			break;
+		case '?':
+		default:
+			usage(stderr,argv);
+			return 1;
 	}
-	
+	if (!params.timestep) {
+		fprintf(stderr,"Timestep is missing.\n");
+		usage(stderr,argv);
+		return 1;
+	} else if (!params.t1) {
+		fprintf(stderr,"t1 is missing.\n");
+		usage(stderr,argv);
+		return 1;
+	} else if (!params.lambda0) {
+		fprintf(stderr,"Initial lambda is missing.\n");
+		usage(stderr,argv);
+		return 1;
+	} else if (!params.nu) {
+		fprintf(stderr,"Nu is missing.\n");
+		usage(stderr,argv);
+		return 1;
+	} else if (!outfile) {
+		fprintf(stderr,"Output file name is missing.\n");
+		usage(stderr,argv);
+		return 1;
+	} else if ((params.initvortfile==NULL)&&(params.initmomentsfile==NULL)) {
+		fprintf(stderr,"Vorticity data file is missing.\n");
+		usage(stderr,argv);
+		return 1;
+	}
+
 	// Get the time when the solver starts working
 	starttime = time(NULL);
 	
+	write_params(&params,outfile);
+	
 	// Initialize solver
-	if ((status = init_solver_by_moments(&params, NCENTERS, centers, moments,
-				-5.0, 5.0, 0.1, 
-				-5.0, 5.0, 0.1, &state)) != HVS_OK) {
+	if ((status = init_solver(&params, &state)) != HVS_OK) {
 		hvserror(status, "Init error");
 		return 0;
 	}
-	write_params(&params,OUTFILE);
 	
 	// Integrate
+	update_vorticity_field(state,&params);
+	append_vorticity(state,outfile);
 	for (i=0;i<10;i++) {
 		params.t0 = 0.1*i;
 		params.t1 = 0.1*(i+1);
 		if ((status = run_solver(&params, state)) == HVS_OK) {
-			printf("Centers: (%.4Lf,%.4Lf),(%.4Lf,%.4Lf)\n", 
-				state->centers[0].x,state->centers[0].y,
-				state->centers[1].x,state->centers[1].y);
 			// Write vorticity to output file
-			if (i%10==0) append_vorticity(state,OUTFILE);
+			append_vorticity(state,outfile);
 		} else {
 			hvserror(status,"Run error");
 			break;
@@ -64,6 +128,21 @@ int main() {
 	// Deinitialize solver
 	free_solver(&state);
 	endtime = time(NULL);
-	printf("Time: %d sec\n",endtime-starttime);
+	if(!quiet)
+		printf("Total computation time: %d sec\n",(int)(endtime-starttime));
 	return 0;
+}
+
+void usage(FILE *fh,const char **argv) {
+	fprintf(fh, "Hermitian vorticity solver.\n");
+	fprintf(fh, "Usage: %s [-h|-q] -v file -o file [-t float|-l float|-n float|-b float|-e float]\n", argv[0]);
+	fprintf(fh, "-h\t\tShow this message.\n");
+	fprintf(fh, "-v file\t\tVorticity data file.\n");
+	fprintf(fh, "-o file\t\tOutput file name.\n");
+	fprintf(fh, "-t float\tIntegration time step. Default: 0.01.\n");
+	fprintf(fh, "-n float\tViscosity of the fluid. Default: 0.1.\n");
+	fprintf(fh, "-l float\tInitial lambda. Default: 1.0.\n");
+	fprintf(fh, "-b float\tInitial time. Default: 0.0\n");
+	fprintf(fh, "-e float\tEnd time. Default: 1.0.\n");
+	fprintf(fh, "-q\t\tQuiet mode. Output only to the output file.\n");
 }

@@ -12,8 +12,29 @@ int gmres(const FLOAT_TYPE *A, const FLOAT_TYPE *x0, const FLOAT_TYPE *b, UINT s
 	FLOAT_TYPE *H = NULL,*Q = NULL;
 	
 	int status;
-	UINT n,i,globaln=0;
+	UINT n,i,j,globaln=0;
 	
+#if HVS_DEBUG>2
+	printf("A:\n");
+	for(i=0;i<size;i++) {
+		for(j=0;j<size;j++)
+			printf("%f\t",A[i*n+j]);
+		printf("\n");
+	}
+	
+	printf("x0:\n");
+	for(i=0;i<size;i++) {
+		printf("%f\t",x0[i]);
+	}
+	printf("\n");
+	
+	printf("b:\n");
+	for(i=0;i<size;i++) {
+		printf("%f\t",b[i]);
+	}
+	printf("\n");
+#endif
+
 	if ((bnorm = malloc(sizeof(FLOAT_TYPE)*size))==NULL) {
 		return HVS_ERR;
 	}
@@ -25,6 +46,7 @@ int gmres(const FLOAT_TYPE *A, const FLOAT_TYPE *x0, const FLOAT_TYPE *b, UINT s
 
 	// Normalize b
 	bnormval = M_SQRT(vect_normsq(b,size));
+	beta=(FLOAT_TYPE)0.0;
 	if ((status=vect_scalarmult((FLOAT_TYPE)1/bnormval,b,size,bnorm))!=HVS_OK) {
 		return status;
 	}
@@ -37,6 +59,10 @@ int gmres(const FLOAT_TYPE *A, const FLOAT_TYPE *x0, const FLOAT_TYPE *b, UINT s
 		globaln++;
 		if((status = vect_matrixmultsub(A,result,bnorm,size,tmp))!=HVS_OK) {
 			return status;
+		}
+		if(M_ABS(beta-M_SQRT(vect_normsq(tmp,size)))<0.000001) {
+			for(i=0;i<size;i++) result[i]*=0.9;
+			continue;
 		}
 		beta = M_SQRT(vect_normsq(tmp,size));
 		n = 0;
@@ -97,8 +123,7 @@ int gmres(const FLOAT_TYPE *A, const FLOAT_TYPE *x0, const FLOAT_TYPE *b, UINT s
 				result[i] = vect_dotproduct(&H[i*n],yn,n);
 				if (i==0) result[i] -= beta;
 			}
-			residualsq = vect_normsq(result,n+1);
-			printf("Residual: %Lf\n",residualsq);
+			residualsq = vect_normsq(result,n+1)/(bnormval*bnormval);
 		}
 	
 		// Get xn
@@ -106,7 +131,7 @@ int gmres(const FLOAT_TYPE *A, const FLOAT_TYPE *x0, const FLOAT_TYPE *b, UINT s
 			int j;
 			result[i] = (FLOAT_TYPE)0.0;
 			for (j=0;j<n;j++) {
-				result[i]+=Q[j*size+i]*yn[j];
+				result[i]+=bnormval*Q[j*size+i]*yn[j];
 			}
 		}
 	}
@@ -161,33 +186,27 @@ int arnoldi(const FLOAT_TYPE *A, UINT m, UINT n, FLOAT_TYPE *H,
 		FLOAT_TYPE *Q) {
 	UINT k,j,i;
 	int status;
+	FLOAT_TYPE *QT,*M1,*M2,*QT1;
+	QT = malloc(sizeof(FLOAT_TYPE)*m*(n+1));
+	QT1 = malloc(sizeof(FLOAT_TYPE)*m*n);
+	k=(m>n+1?m:n+1);
+	M1 = malloc(sizeof(FLOAT_TYPE)*k*k);
+	M2 = malloc(sizeof(FLOAT_TYPE)*k*k);
 
 	if ((status=vect_matrixmult(A,&Q[(n-1)*m],m,&Q[n*m]))!=HVS_OK) {
 		return status;
 	}
 	for(j=0;j<n;j++) {
 		H[j*n+n-1]=vect_dotproduct(&Q[j*m],&Q[n*m],m);
-		if ((status=vect_scalarmultsub(H[j*n+n-1],&Q[j*m],&Q[n*m],m,&Q[n*m]))!=HVS_OK) {
+		if ((status=vect_scalarmultadd(-H[j*n+n-1],&Q[j*m],&Q[n*m],m,&Q[n*m]))!=HVS_OK) {
 			return status;
 		}
 	}
 	H[n*n+n-1]=M_SQRT(vect_normsq(&Q[n*m],m));
 	if (H[n*n+n-1]>=0.0000001) {
-		if((status=vect_scalarmult(-1/H[n*n+n-1],&Q[n*m],m,&Q[n*m]))!=HVS_OK) {
+		if((status=vect_scalarmult(1/H[n*n+n-1],&Q[n*m],m,&Q[n*m]))!=HVS_OK) {
 			return status;
 		}
-	}
-	printf("Q:\n");
-	for(i=0;i<n+1;i++) {
-		for(k=0;k<m;k++)
-		    printf("%Lf\t",Q[i*m+k]);
-		printf("\n");
-	}
-	printf("H:\n");
-	for(i=0;i<n+1;i++) {
-		for(k=0;k<n;k++)
-		    printf("%Lf\t",H[i*n+k]);
-		printf("\n");
 	}
 	return HVS_OK;
 }

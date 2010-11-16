@@ -21,12 +21,20 @@ void closefile(hvs_file **file) {
 ssize_t read_vorticity(const hvs_file *file, size_t count, hvs_position *pos, hvs_vorticity *vort) {
 	int readcount = 0;
 	int currread = 0;
+#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
+	FLOAT_TYPE x,y,tvort;
+#else
+	float x,y,tvort;
+#endif
 	while (!feof(file->fh) && readcount<count) {
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
-		if ((currread = fscanf(file->fh, "%Lf\t%Lf\t%Lf\n", &(pos[readcount].x), &(pos[readcount].y), &(vort[readcount])))==3) {
+		if ((currread = fscanf(file->fh, "%Lf\t%Lf\t%Lf\n", &x, &y, &tvort))==3) {
 #else
-		if ((currread = fscanf(file->fh, "%f\t%f\t%f\n", &(pos[readcount].x), &(pos[readcount].y), &(vort[readcount])))==3) {
+		if ((currread = fscanf(file->fh, "%f\t%f\t%f\n", &x, &y, &tvort))==3) {
 #endif
+			pos[readcount].x=x;
+			pos[readcount].y=y;
+			vort[readcount]=tvort;
 			readcount++;
 		} else if (currread == EOF) {
 			continue;
@@ -36,6 +44,90 @@ ssize_t read_vorticity(const hvs_file *file, size_t count, hvs_position *pos, hv
 #endif
 			return HVS_ERR_WRONG_FILE_FORMAT;
 		}
+	}
+	return readcount;
+}
+
+ssize_t read_centers(const hvs_file *file, size_t count, hvs_center *pos) {
+	int readcount = 0;
+	int currread = 0;
+#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
+	FLOAT_TYPE x,y;
+#else
+	float x,y;
+#endif
+	while (!feof(file->fh) && readcount<count) {
+#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
+		if ((currread = fscanf(file->fh, "%Lf\t%Lf\n", &x, &y))==2) {
+#else
+		if ((currread = fscanf(file->fh, "%f\t%f\t\n", &x, &y))==2) {
+#endif
+			pos[readcount].x=x;
+			pos[readcount].y=y;
+			readcount++;
+		} else if (currread == EOF) {
+			continue;
+		} else {
+#ifdef HVS_DEBUG
+			fprintf(stderr,"Currread: %i\n",currread);
+#endif
+			return HVS_ERR_WRONG_FILE_FORMAT;
+		}
+	}
+	return readcount;
+}
+
+ssize_t read_moments(const hvs_file *file, size_t count, hvs_center *pos, hvs_moment *moment) {
+	int readcount = 0;
+	int currread = 0;
+	hvs_moment curmoment;
+	int i;
+	while (!feof(file->fh) && readcount<count) {
+#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
+		if ((currread = fscanf(file->fh, "%Lf\t%Lf", &(pos[readcount].x), &(pos[readcount].y)))==2) {
+#else
+		if ((currread = fscanf(file->fh, "%f\t%f", &(pos[readcount].x), &(pos[readcount].y)))==2) {
+#endif
+		} else if (currread == EOF) {
+			continue;
+		} else {
+#ifdef HVS_DEBUG
+			fprintf(stderr,"Currread: %i\n",currread);
+#endif
+			return HVS_ERR_WRONG_FILE_FORMAT;
+		}
+		for(i=0;i<NCOMBS;i++) {
+			if ((currread = fscanf(file->fh,"\t"))==1) {
+			} else if (currread == EOF) {
+				continue;
+			} else {
+#ifdef HVS_DEBUG
+				fprintf(stderr,"Currread: %i\n",currread);
+#endif
+			}
+#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
+			if ((currread = fscanf(file->fh, "%Lf", &(curmoment[i])))==1) {
+#else
+			if ((currread = fscanf(file->fh, "%f", &(curmoment[i])))==1) {
+#endif
+			} else if (currread == EOF) {
+				continue;
+			} else {
+#ifdef HVS_DEBUG
+				fprintf(stderr,"Currread: %i\n",currread);
+#endif
+			}
+		}
+		if ((currread = fscanf(file->fh,"\n"))==1) {
+		} else if (currread == EOF) {
+			continue;
+		} else {
+#ifdef HVS_DEBUG
+			fprintf(stderr,"Currread: %i\n",currread);
+#endif
+		}
+		memcpy(moment[readcount],curmoment,sizeof(hvs_moment));
+		readcount++;
 	}
 	return readcount;
 }

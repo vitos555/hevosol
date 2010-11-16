@@ -33,6 +33,7 @@
 #define MOMENTS_LEN NCOMBS
 
 #define MIN(a,b) ((a)>(b)?(b):(a))
+#define MAX(a,b) ((a)>(b)?(a):(b))
 #define POWN1(a) ((a)%2==0?1:-1)
 #define POW2(a) ((a)==0?1:2<<((a)-1))
 #define POW(a,b) ((b)==0?1:((b)==1?(a):((b)==2?(a)*(a):((b)==3?(a)*(a)*(a):M_POW((a),(b))))))
@@ -65,6 +66,8 @@ typedef FLOAT_TYPE hvs_vorticity;
 
 typedef struct {
 	char	*initvortfile; /* Initial vorticity field file name */
+	char	*initcentersfile; /* Initial centers positions file name */
+	char	*initmomentsfile; /* Initial moments file name */
 	FLOAT_TYPE	t0;
 	FLOAT_TYPE	t1;
 	FLOAT_TYPE	timestep;

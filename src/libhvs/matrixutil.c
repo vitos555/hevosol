@@ -121,3 +121,10 @@ int matrix_inv(const FLOAT_TYPE *m, UINT n, FLOAT_TYPE *result) {
 	return HVS_OK;
 }
 
+int matrix_transpose(const FLOAT_TYPE *A, UINT m, UINT n, FLOAT_TYPE *result) {
+	UINT i,j;
+	for(i=0;i<m;i++)
+		for(j=0;j<n;j++) 
+			result[j*m+i]=A[i*n+j];
+	return HVS_OK;
+}

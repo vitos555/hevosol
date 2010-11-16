@@ -15,5 +15,6 @@ int matrix_add(const FLOAT_TYPE *A1, const FLOAT_TYPE *A2,
 int matrix_scalarmult(const FLOAT_TYPE scalar, const FLOAT_TYPE *m1,
 			UINT m, UINT n, FLOAT_TYPE *result);
 int matrix_inv(const FLOAT_TYPE *m, UINT n, FLOAT_TYPE *result);
+int matrix_transpose(const FLOAT_TYPE *A, UINT m, UINT n, FLOAT_TYPE *result);
 
 #endif
