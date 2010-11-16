@@ -12,7 +12,7 @@
 #include "hermiteutil.h"
 #include "factorialutil.h"
 
-#if NMOMENTS == 2
+#if NMOMENTS <= 2
 #include "hvs_two_moments.c"
 #else
 #include "hvs_simple.c"

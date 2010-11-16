@@ -142,8 +142,8 @@ int eval_eq(hvs_ode_data *input, hvs_ode_data *output, hvs_coefs *coefs, FLOAT_T
 						m2=COMBS_IND2(m);
 						gamma1=0.0;
 						gamma2=0.0;
-						for (i=0;i<NMOMENTS;i++)
-						for (j=0;j<NMOMENTS;j++) {
+						for (i=0;i<=NMOMENTS;i++)
+						for (j=0;j<=NMOMENTS;j++) {
 							if (j0==i0) {
 // If j'==j gammas will come from A
 							if ( (i<=MIN(l1,k1-1)) && (j<=MIN(l2,k2)) )
@@ -317,8 +317,8 @@ int init_coefs(hvs_coefs *coefs) {
 			for(m=0;m<NCOMBS;m++) {
 				m1=COMBS_IND1(m);
 				m2=COMBS_IND2(m);
-				for(i=0;i<NMOMENTS;i++)
-				for(j=0;j<NMOMENTS;j++) {
+				for(i=0;i<=NMOMENTS;i++)
+				for(j=0;j<=NMOMENTS;j++) {
 					if ((i<=MIN(l1,k1-1))&&(j<=MIN(l2,k2))) {
 coefs->gamma1[COEF_INDEX(k1,k2,l1,l2,m1,m2,i,j)]=(FLOAT_TYPE)POWN1(l1+l2)*
 	binomial(l1,i)*binomial(l2,j)*(POW2(i+1)*factorial(k1))/factorial(k1-i-1)*
