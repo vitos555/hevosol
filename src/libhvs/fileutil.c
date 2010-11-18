@@ -228,54 +228,45 @@ ssize_t append_params(const hvs_params *params, const char *filename) {
 
 ssize_t write_moments(const hvs_state *state, const char *filename) {
 	int writecount = 0;
-	int i0;
+	int i0,i;
 	FILE *fh;
 	if ((fh = fopen(filename, "w+")) == NULL) {
 		return HVS_ERR;
 	}
 	fprintf(fh,"=Moments (0,0)	(2,0)	(1,1)	(0,2) =\n");
 	for(i0=0;i0<state->ncenters;i0++) {
+		for(i=0;i<NCOMBS;i++)
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
-	fprintf(fh,"%Lf\t%Lf\t%Lf\t%Lf\n",
-		state->moments[i0][MOM_INDEX(0,0)],
-		state->moments[i0][MOM_INDEX(2,0)],
-		state->moments[i0][MOM_INDEX(1,1)],
-		state->moments[i0][MOM_INDEX(0,2)]);
+			fprintf(fh,"%Lf\t",state->moments[i0][i]);
 #else
-	fprintf(fh,"%f\t%f\t%f\t%f\n",
-		state->moments[i0][MOM_INDEX(0,0)],
-		state->moments[i0][MOM_INDEX(2,0)],
-		state->moments[i0][MOM_INDEX(1,1)],
-		state->moments[i0][MOM_INDEX(0,2)]);
+			fprintf(fh,"%f\t",state->moments[i0][i]);
 #endif
-	writecount+=1;
+		fprintf(fh,"\n");
+		writecount+=1;
 	}
 	fclose(fh);
 	return writecount;
 }
 ssize_t append_moments(const hvs_state *state, const char *filename) {
 	int writecount = 0;
-	int i0;
+	int i0,i;
 	FILE *fh;
 	if ((fh = fopen(filename, "a+")) == NULL) {
 		return HVS_ERR;
 	}
-	fprintf(fh,"=Moments (0,0)	(2,0)	(1,1)	(0,2) =\n");
+	fprintf(fh,"=Moments ");
+	for(i=0;i<NCOMBS;i++)
+		fprintf(fh,"(%d,%d)\t",COMBS_IND1(i),COMBS_IND2(i));
+	fprintf(fh, "=\n");
 	for(i0=0;i0<state->ncenters;i0++) {
+		for(i=0;i<NCOMBS;i++)
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
-	fprintf(fh,"%Lf\t%Lf\t%Lf\t%Lf\n",
-		state->moments[i0][MOM_INDEX(0,0)],
-		state->moments[i0][MOM_INDEX(2,0)],
-		state->moments[i0][MOM_INDEX(1,1)],
-		state->moments[i0][MOM_INDEX(0,2)]);
+			fprintf(fh,"%Lf\t",state->moments[i0][i]);
 #else
-	fprintf(fh,"%f\t%f\t%f\t%f\n",
-		state->moments[i0][MOM_INDEX(0,0)],
-		state->moments[i0][MOM_INDEX(2,0)],
-		state->moments[i0][MOM_INDEX(1,1)],
-		state->moments[i0][MOM_INDEX(0,2)]);
+			fprintf(fh,"%f\t",state->moments[i0][i]);
 #endif
-	writecount+=1;
+		fprintf(fh,"\n");
+		writecount+=1;
 	}
 	fclose(fh);
 	return writecount;
