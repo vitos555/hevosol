@@ -8,14 +8,14 @@
 #include "libhvs/fileutil.h"
 #include "libhvs/hermiteutil.h"
 
-void usage(FILE *fh,const char **argv);
+void usage(FILE *fh,char **argv);
 
 int main(int argc, char **argv) {
 	hvs_state* state;
 	hvs_params params;
 	int status,i,c,index,quiet=0,reqargs=0;
 	char *outfile=NULL;
-	float t;
+	float t,t1,t2;
 	time_t starttime,endtime;
 	memset(&params,0,sizeof(hvs_params));
 	// Default values of the parameters
@@ -24,12 +24,18 @@ int main(int argc, char **argv) {
 	params.timestep=(FLOAT_TYPE)0.01;
 	params.t0=(FLOAT_TYPE)0.0;
 	params.t1=(FLOAT_TYPE)1.0;
+	params.xmin=(FLOAT_TYPE)-5.0;
+	params.xmax=(FLOAT_TYPE)5.0;
+	params.xstep=(FLOAT_TYPE)0.1;
+	params.ymin=(FLOAT_TYPE)-5.0;
+	params.ymax=(FLOAT_TYPE)5.0;
+	params.ystep=(FLOAT_TYPE)0.1;
 	params.initvortfile = NULL;
 	params.initcentersfile = NULL;
 	params.initmomentsfile = NULL;
 
 	opterr = 0; 
-	while ((c = getopt (argc, argv, "hqv::c::t:l:n:b:e:m::o:")) != -1)
+	while ((c = getopt (argc, argv, "hqv::c::t:l:n:b:e:m::o:x::y::")) != -1)
 		switch (c)
 		{
 		case 'v':
@@ -61,6 +67,18 @@ int main(int argc, char **argv) {
 		case 'e':
 			sscanf(optarg,"%f",&t);
 			params.t1=t;
+			break;
+		case 'x':
+			sscanf(optarg,"%f:%f:%f",&t,&t1,&t2);
+			params.xmin=t;
+			params.xmax=t2;
+			params.xstep=t1;
+			break;
+		case 'y':
+			sscanf(optarg,"%f:%f:%f",&t,&t1,&t2);
+			params.xmin=t;
+			params.ymax=t2;
+			params.ystep=t1;
 			break;
 		case 'h':
 			usage(stdout,argv);
@@ -112,6 +130,8 @@ int main(int argc, char **argv) {
 	
 	// Integrate
 	update_vorticity_field(state,&params);
+	append_centers(state,outfile);
+	append_moments(state,outfile);
 	append_vorticity(state,outfile);
 	for (i=0;i<10;i++) {
 		params.t0 = 0.1*i;
@@ -133,16 +153,21 @@ int main(int argc, char **argv) {
 	return 0;
 }
 
-void usage(FILE *fh,const char **argv) {
+void usage(FILE *fh,char **argv) {
 	fprintf(fh, "Hermitian vorticity solver.\n");
 	fprintf(fh, "Usage: %s [-h|-q] -v file -o file [-t float|-l float|-n float|-b float|-e float]\n", argv[0]);
 	fprintf(fh, "-h\t\tShow this message.\n");
 	fprintf(fh, "-v file\t\tVorticity data file.\n");
+	fprintf(fh, "-m file\t\tMoments data file.\n");
 	fprintf(fh, "-o file\t\tOutput file name.\n");
 	fprintf(fh, "-t float\tIntegration time step. Default: 0.01.\n");
 	fprintf(fh, "-n float\tViscosity of the fluid. Default: 0.1.\n");
 	fprintf(fh, "-l float\tInitial lambda. Default: 1.0.\n");
 	fprintf(fh, "-b float\tInitial time. Default: 0.0\n");
 	fprintf(fh, "-e float\tEnd time. Default: 1.0.\n");
+	fprintf(fh, "-x min:step:max\tGrid size in x direction. Default: -5.0:0.1:5.0.\n");
+	fprintf(fh, "\t\tUsed only with moments data file.\n");
+	fprintf(fh, "-y min:step:max\tGrid size in y direction. Default: -5.0:0.1:5.0.\n");
+	fprintf(fh, "\t\tUsed only with moments data file.\n");
 	fprintf(fh, "-q\t\tQuiet mode. Output only to the output file.\n");
 }

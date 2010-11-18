@@ -8,16 +8,16 @@
 
 // Number of moments to include
 #define NMOMENTS 2
-#define NMOMENTS_1 3
-#define NMOMENTS_2 9
-#define NMOMENTS_3 27
-#define NMOMENTS_4 81
-#define NMOMENTS_5 243
-#define NMOMENTS_6 729
-#define NMOMENTS_7 2187
-#define NMOMENTS_8 6561
-#define NMOMENTS_9 19683
-#define NMOMENTS_10 59049 
+#define NMOMENTS_1 (NMOMENTS+1)
+#define NMOMENTS_2 (NMOMENTS_1*NMOMENTS_1)
+#define NMOMENTS_3 (NMOMENTS_2*NMOMENTS_1)
+#define NMOMENTS_4 (NMOMENTS_3*NMOMENTS_1)
+#define NMOMENTS_5 (NMOMENTS_4*NMOMENTS_1)
+#define NMOMENTS_6 (NMOMENTS_5*NMOMENTS_1)
+#define NMOMENTS_7 (NMOMENTS_6*NMOMENTS_1)
+#define NMOMENTS_8 (NMOMENTS_7*NMOMENTS_1)
+#define NMOMENTS_9 (NMOMENTS_8*NMOMENTS_1)
+#define NMOMENTS_10 (NMOMENTS_9*NMOMENTS_1)
 // Number of combinations of moments
 #define NCOMBS (NMOMENTS+1)*(NMOMENTS+2)/2
 // Combination index:
@@ -27,8 +27,12 @@
 // 3 -> (2,0)
 // 4 -> (1,1)
 // 5 -> (0,2)
-#define COMBS_IND1(i) ((i)==0?0:((i)==1?1:((i)==2?0:((i)==3?2:((i)==4?1:((i)==5?0:0))))))
-#define COMBS_IND2(i) ((i)==0?0:((i)==1?0:((i)==2?1:((i)==3?0:((i)==4?1:((i)==5?2:0))))))
+// 6 -> (3,0)
+// 7 -> (2,1)
+// 8 -> (1,2)
+// 9 -> (0,3)
+#define COMBS_IND1(i) (i)==0?0:(i)==1?1:(i)==2?0:(i)==3?2:(i)==4?1:(i)==5?0:(i)==6?3:(i)==7?2:(i)==8?1:(i)==9?0:0
+#define COMBS_IND2(i) (i)==0?0:(i)==1?0:(i)==2?1:(i)==3?0:(i)==4?1:(i)==5?2:(i)==6?0:(i)==7?1:(i)==8?2:(i)==9?3:0
 
 #define MOMENTS_LEN NCOMBS
 
@@ -73,6 +77,8 @@ typedef struct {
 	FLOAT_TYPE	timestep;
 	FLOAT_TYPE	lambda0;
 	FLOAT_TYPE	nu;
+	FLOAT_TYPE	xmin,xmax,xstep;
+	FLOAT_TYPE	ymin,ymax,ystep;
 } hvs_params;
 
 typedef struct {
@@ -103,8 +109,7 @@ typedef struct {
 
 int init_solver(const hvs_params *params, hvs_state **sstate);
 int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_centers centers, const hvs_moments moments,
-				FLOAT_TYPE xmin, FLOAT_TYPE xmax, FLOAT_TYPE xstep, 
-				FLOAT_TYPE ymin, FLOAT_TYPE ymax, FLOAT_TYPE ystep, hvs_state **sstate);
+				hvs_state **sstate);
 void free_solver(hvs_state **sstate);
 int run_solver(const hvs_params *params, hvs_state *state);
 

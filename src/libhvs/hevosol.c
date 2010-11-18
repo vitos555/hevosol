@@ -12,15 +12,14 @@
 #include "hermiteutil.h"
 #include "factorialutil.h"
 
-#if NMOMENTS <= 2
-#include "hvs_two_moments.c"
+#if NMOMENTS <= 4
+#include "hvs_multi_moments.c"
 #else
-#include "hvs_simple.c"
+#error "Currently implemented only 4 moments."
 #endif
 
 int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_centers centers, const hvs_moments moments,
-				FLOAT_TYPE xmin, FLOAT_TYPE xmax, FLOAT_TYPE xstep, 
-				FLOAT_TYPE ymin, FLOAT_TYPE ymax, FLOAT_TYPE ystep, hvs_state **sstate) {
+				hvs_state **sstate) {
 	hvs_state* state = (hvs_state *) malloc(sizeof(hvs_state));
 	int i, j;
 	if (state == NULL)
@@ -54,14 +53,14 @@ int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_centers 
 		return HVS_ERR;
 	}
 	
-	state->xmin = xmin;
-	state->xmax = xmax;
-	state->xstep = xstep;
-	state->ymin = ymin;
-	state->ymax = ymax;
-	state->ystep = ystep;
-	state->sizex = floor(abs(xmax-xmin)/xstep);
-	state->sizey = floor(abs(ymax-ymin)/ystep);
+	state->xmin = params->xmin;
+	state->xmax = params->xmax;
+	state->xstep = params->xstep;
+	state->ymin = params->ymin;
+	state->ymax = params->ymax;
+	state->ystep = params->ystep;
+	state->sizex = floor(abs(state->xmax-state->xmin)/state->xstep)+1;
+	state->sizey = floor(abs(state->ymax-state->ymin)/state->ystep)+1;
 	state->size = state->sizex*state->sizey;
 	
 	state->grid = (hvs_position *) malloc(sizeof(hvs_position)*state->size);
@@ -84,8 +83,8 @@ int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_centers 
 	memset(state->vorticity_field, 0, sizeof(hvs_vorticity)*state->size);
 	for (i=0;i<state->sizey;i++)
 		for(j=0;j<state->sizex;j++) {
-			state->grid[i*state->sizex+j].x = xmin+xstep*j;
-			state->grid[i*state->sizex+j].y = ymin+ystep*i;
+			state->grid[i*state->sizex+j].x = state->xmin+state->xstep*j;
+			state->grid[i*state->sizex+j].y = state->ymin+state->ystep*i;
 		}
 
 	// Initialize velocity field
@@ -122,21 +121,43 @@ int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_centers 
 }
 
 int init_solver(const hvs_params *params, hvs_state **sstate) {
-	hvs_state* state = (hvs_state *) malloc(sizeof(hvs_state));
 	hvs_file* file;
 	hvs_position *pos = NULL;
 	hvs_vorticity *vort = NULL;
 	int status = 0;
 	UINT cursize = 0;
-	if (state == NULL) 
-		return HVS_ERR;
+	hvs_state* state = NULL;
+	hvs_moments moments = NULL;
 	if (params->initvortfile==NULL)
-		return HVS_ERR_WRONG_USAGE;
+		if (params->initmomentsfile==NULL)
+			return HVS_ERR_WRONG_USAGE;
+		else { // We don't have vorticity file but we have moments
+			// Init file handler
+			if (initfile(params->initmomentsfile, &file)) {
+				return HVS_ERR;
+			}
+			// Read data
+			do {
+				cursize += status;
+				if ((pos = (hvs_position *)realloc(pos, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_position)))==NULL) {
+					return HVS_ERR;
+				}
+				if ((moments = realloc(moments, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_moment)))==NULL) {
+					return HVS_ERR;
+				}
+			} while ((status = read_moments(file,HVS_READ_BLOCK_SIZE,
+				pos+cursize*sizeof(hvs_position),
+				moments+cursize*sizeof(hvs_moment))) == HVS_READ_BLOCK_SIZE);
+			if (status < 0) {
+				return status;
+			}
+			cursize += status;
+			closefile(&file);
+			return init_solver_by_moments(params, cursize, pos, moments, sstate);
+		}
 
 	// Init file handler
 	if (initfile(params->initvortfile, &file)) {
-		free(state);
-		state = NULL;
 		return HVS_ERR;
 	}
 	
@@ -144,26 +165,22 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 	do {
 		cursize += status;
 		if ((pos = (hvs_position *)realloc(pos, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_position)))==NULL) {
-			free(state);
-			state = NULL;
 			return HVS_ERR;
 		}
 		if ((vort = (hvs_vorticity *)realloc(vort, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_vorticity)))==NULL) {
-			free(state);
-			state = NULL;
 			return HVS_ERR;
 		}
 	} while ((status = read_vorticity(file,HVS_READ_BLOCK_SIZE,
 			pos+cursize*sizeof(hvs_position),
 			vort+cursize*sizeof(hvs_vorticity))) == HVS_READ_BLOCK_SIZE);
 	if (status < 0) {
-		free(state);
-		state = NULL;
 		return status;
 	}
 	cursize += status;
 	closefile(&file);
 	
+	if ((state = (hvs_state *) malloc(sizeof(hvs_state))) == NULL) 
+		return HVS_ERR;
 	state->grid = pos;
 	state->vorticity_field = vort;
 	state->ncenters = 0;
