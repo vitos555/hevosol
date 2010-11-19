@@ -6,7 +6,7 @@
 #ifndef HVS_FILEUTIL_H
 #define HVS_FILEUTIL_H 1
 
-#define HVS_READ_BLOCK_SIZE 100
+#define HVS_READ_BLOCK_SIZE 1000
 
 #include <stdio.h>
 #include "hevosol.h"

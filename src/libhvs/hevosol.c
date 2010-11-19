@@ -147,8 +147,8 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 					return HVS_ERR;
 				}
 			} while ((status = read_moments(file,HVS_READ_BLOCK_SIZE,
-				centers+cursize*sizeof(hvs_position),
-				moments+cursize*sizeof(hvs_moment))) == HVS_READ_BLOCK_SIZE);
+				&centers[cursize],
+				&moments[cursize])) == HVS_READ_BLOCK_SIZE);
 			if (status < 0) {
 				return status;
 			}
@@ -172,8 +172,8 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 			return HVS_ERR;
 		}
 	} while ((status = read_vorticity(file,HVS_READ_BLOCK_SIZE,
-			pos+cursize*sizeof(hvs_position),
-			vort+cursize*sizeof(hvs_vorticity))) == HVS_READ_BLOCK_SIZE);
+			&pos[cursize],
+			&vort[cursize])) == HVS_READ_BLOCK_SIZE);
 	if (status < 0) {
 		return status;
 	}
@@ -192,14 +192,14 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 		if((status=initfile(params->initcentersfile, &file))==HVS_OK) {
 			do {
 				state->ncenters += status;
-				if ((pos = (hvs_position *)realloc(state->centers, (state->ncenters+HVS_READ_BLOCK_SIZE)*sizeof(hvs_center)))==NULL) {
+				if ((centers = (hvs_position *)realloc(centers, (state->ncenters+HVS_READ_BLOCK_SIZE)*sizeof(hvs_center)))==NULL) {
 					free(state->grid);
 					free(state);
 					state = NULL;
 					return HVS_ERR;
 				}
 			} while ((status = read_centers(file,HVS_READ_BLOCK_SIZE,
-					&pos[cursize])) == HVS_READ_BLOCK_SIZE);
+					&centers[cursize])) == HVS_READ_BLOCK_SIZE);
 			if (status < 0) {
 				free(state->grid);
 				free(state->vorticity_field);
@@ -208,6 +208,7 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 				return status;
 			}
 			closefile(&file);
+			state->centers = centers;
 		} else {
 			free(state->grid);
 			free(state->vorticity_field);
@@ -268,7 +269,6 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 		free(state);
 		return HVS_ERR;
 	}
-
 	init_moments(state);
 
 	// Initialize velocity field
