@@ -346,10 +346,10 @@ void free_solver(hvs_state **sstate) {
 int run_solver(const hvs_params *params, hvs_state *state) {
 	unsigned int i;
 	char status;
-	unsigned int stepsnum = floor((params->t1-params->t0)/params->timestep);
+	unsigned int stepsnum = round((params->t1-params->t0)/params->timestep);
 	FLOAT_TYPE tn;
 	tn = params->t0;
-	for(i=0;i<stepsnum+1;i++) {
+	for(i=0;i<stepsnum;i++) {
 		if ((status = step_solver(state, &tn, params)) != HVS_OK) {
 			return status;
 		}

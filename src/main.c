@@ -14,7 +14,7 @@ void usage(FILE *fh,char **argv);
 int main(int argc, char **argv) {
 	hvs_state* state;
 	hvs_params params;
-	int status,i,c,index,quiet=0,reqargs=0;
+	int status,i,c,index,quiet=0,reqargs=0,num=0;
 	char *outfile=NULL;
 	float t,t1,t2;
 	time_t starttime,endtime;
@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
 	params.initmomentsfile = NULL;
 
 	opterr = 0; 
-	while ((c = getopt(argc, argv, "hqv:c:t:l:n:b:e:m:o:x:y:")) != -1)
+	while ((c = getopt(argc, argv, "hqv:c:t:l:n:b:e:m:o:x:y:p:")) != -1)
 		switch (c)
 		{
 		case 'v':
@@ -45,6 +45,9 @@ int main(int argc, char **argv) {
 			break;
 		case 'm':
 			params.initmomentsfile = optarg;
+			break;
+		case 'p':
+			sscanf(optarg,"%d",&num);
 			break;
 		case 'o':
 			outfile = optarg;
@@ -126,7 +129,7 @@ int main(int argc, char **argv) {
 	// Initialize solver
 	if ((status = init_solver(&params, &state)) != HVS_OK) {
 		hvserror(status, "Init error");
-		return 0;
+		return 1;
 	}
 	
 	// Integrate
@@ -134,18 +137,33 @@ int main(int argc, char **argv) {
 	append_centers(state,outfile);
 	append_moments(state,outfile);
 	append_vorticity(state,outfile);
-	for (i=0;i<10;i++) {
-		params.t0 = 0.1*i;
-		params.t1 = 0.1*(i+1);
+	t1=params.t0;
+	t2=params.t1;
+	if (t1>t2) {
+		hvserror(0,"End time should be greater then beginning.");
+		return 1;
+	}
+	if (num>0) {
+		for(t=t1;t<t2;t+=num*params.timestep) {
+			params.t0=t;
+			params.t1=MIN(t+num*params.timestep,t2);
+			if ((status = run_solver(&params, state)) == HVS_OK) {
+				// Write vorticity to output file
+				append_vorticity(state,outfile);
+			} else {
+				hvserror(status,"Run error");
+				return 1;
+			}
+		}
+	} else {
 		if ((status = run_solver(&params, state)) == HVS_OK) {
 			// Write vorticity to output file
 			append_vorticity(state,outfile);
 		} else {
 			hvserror(status,"Run error");
-			break;
+			return 1;
 		}
 	}
-	
 	// Deinitialize solver
 	free_solver(&state);
 	endtime = time(NULL);
@@ -161,7 +179,10 @@ void usage(FILE *fh,char **argv) {
 	fprintf(fh, "-v file\t\tVorticity data file.\n");
 	fprintf(fh, "-m file\t\tMoments data file.\n");
 	fprintf(fh, "-o file\t\tOutput file name.\n");
-	fprintf(fh, "-t float\tIntegration time step. Default: 0.01.\n");
+	fprintf(fh, "-t float\tIntegration time step. Default: 0.01:1.\n");
+	fprintf(fh, "-p number\tNumber of integration time steps between vorticity\n");
+	fprintf(fh, "\t\tfield outputs. Default: 0 (output vorticity only\n");
+	fprintf(fh, "\t\tat the beginning and at the end).\n");
 	fprintf(fh, "-n float\tViscosity of the fluid. Default: 0.1.\n");
 	fprintf(fh, "-l float\tInitial lambda. Default: 1.0.\n");
 	fprintf(fh, "-b float\tInitial time. Default: 0.0\n");
