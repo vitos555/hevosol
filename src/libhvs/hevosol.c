@@ -252,14 +252,21 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 	// Copy values to the state structure
 	state->size = cursize;
 	
-	state->xmin = MIN(pos[0].x,pos[cursize-1].x);
-	state->xmax = MAX(pos[0].x,pos[cursize-1].x);
-	state->ymin = MIN(pos[0].y,pos[cursize-1].y);
-	state->ymax = MAX(pos[0].y,pos[cursize-1].y);
-	state->ystep = M_ABS(pos[1].y-pos[0].y);
-	state->sizey = floor((state->ymax-state->ymin)/state->ystep)+1;
-	state->xstep = M_ABS(pos[state->sizey].x-pos[0].x);
-	state->sizex = floor((state->xmax-state->xmin)/state->xstep)+1;
+	state->xmin = MIN(state->grid[0].x,state->grid[cursize-1].x);
+	state->xmax = MAX(state->grid[0].x,state->grid[cursize-1].x);
+	state->ymin = MIN(state->grid[0].y,state->grid[cursize-1].y);
+	state->ymax = MAX(state->grid[0].y,state->grid[cursize-1].y);
+	state->ystep = M_ABS(state->grid[1].y-state->grid[0].y);
+	if (state->ystep>HVS_EPS) {
+		state->sizey = round((state->ymax-state->ymin)/state->ystep)+1;
+		state->xstep = M_ABS(pos[state->sizey].x-pos[0].x);
+		state->sizex = round((state->xmax-state->xmin)/state->xstep)+1;
+	} else {
+		state->xstep = M_ABS(state->grid[1].x-state->grid[0].x);
+		state->sizex = round((state->xmax-state->xmin)/state->xstep)+1;
+		state->ystep = M_ABS(pos[state->sizex].y-pos[0].y);
+		state->sizey = round((state->ymax-state->ymin)/state->ystep)+1;
+	}
 	
 	if(cursize != (state->sizex*state->sizey)) {
 		free(state->centers);
@@ -267,7 +274,7 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 		free(state->vorticity_field);
 		free(state->grid);
 		free(state);
-		return HVS_ERR;
+		return HVS_ERR_WRONG_SIZE;
 	}
 	init_moments(state);
 

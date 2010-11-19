@@ -21,20 +21,18 @@ void closefile(hvs_file **file) {
 ssize_t read_vorticity(const hvs_file *file, size_t count, hvs_position *pos, hvs_vorticity *vort) {
 	int readcount = 0;
 	int currread = 0;
-#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
 	FLOAT_TYPE x,y,tvort;
-#else
-	float x,y,tvort;
-#endif
 	while (!feof(file->fh) && readcount<count) {
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
 		if ((currread = fscanf(file->fh, "%Lf\t%Lf\t%Lf\n", &x, &y, &tvort))==3) {
-#else
+#elif HVS_FLOAT_TYPE==HVS_FLOAT
 		if ((currread = fscanf(file->fh, "%f\t%f\t%f\n", &x, &y, &tvort))==3) {
+#else
+		if ((currread = fscanf(file->fh, "%lf\t%lf\t%lf\n", &x, &y, &tvort))==3) {
 #endif
-			pos[readcount].x=x;
-			pos[readcount].y=y;
-			vort[readcount]=tvort;
+			pos[readcount].x=(FLOAT_TYPE)x;
+			pos[readcount].y=(FLOAT_TYPE)y;
+			vort[readcount]=(FLOAT_TYPE)tvort;
 			readcount++;
 		} else if (currread == EOF) {
 			continue;
@@ -51,16 +49,14 @@ ssize_t read_vorticity(const hvs_file *file, size_t count, hvs_position *pos, hv
 ssize_t read_centers(const hvs_file *file, size_t count, hvs_centers pos) {
 	int readcount = 0;
 	int currread = 0;
-#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
 	FLOAT_TYPE x,y;
-#else
-	float x,y;
-#endif
 	while (!feof(file->fh) && readcount<count) {
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
 		if ((currread = fscanf(file->fh, "%Lf\t%Lf\n", &x, &y))==2) {
-#else
+#elif HVS_FLOAT_TYPE==HVS_FLOAT
 		if ((currread = fscanf(file->fh, "%f\t%f\t\n", &x, &y))==2) {
+#else
+		if ((currread = fscanf(file->fh, "%lf\t%lf\t\n", &x, &y))==2) {
 #endif
 			pos[readcount].x=x;
 			pos[readcount].y=y;
@@ -80,17 +76,15 @@ ssize_t read_centers(const hvs_file *file, size_t count, hvs_centers pos) {
 ssize_t read_moments(const hvs_file *file, size_t count, hvs_center *pos, hvs_moment *moment) {
 	int readcount = 0;
 	int currread = 0;
-#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
 	FLOAT_TYPE x,y,m;
-#else
-	float x,y,m;
-#endif
 	int i;
 	while (!feof(file->fh) && readcount<count) {
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
 		if ((currread = fscanf(file->fh, "%Lf\t%Lf", &x, &y))==2) {
-#else
+#elif HVS_FLOAT_TYPE==HVS_FLOAT
 		if ((currread = fscanf(file->fh, "%f\t%f", &x, &y))==2) {
+#else
+		if ((currread = fscanf(file->fh, "%lf\t%lf", &x, &y))==2) {
 #endif
 			pos[readcount].x=x;
 			pos[readcount].y=y;
@@ -113,8 +107,10 @@ ssize_t read_moments(const hvs_file *file, size_t count, hvs_center *pos, hvs_mo
 			}
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
 			if ((currread = fscanf(file->fh, "%Lf", &m))==1) {
-#else
+#elif HVS_FLOAT_TYPE==HVS_FLOAT
 			if ((currread = fscanf(file->fh, "%f", &m))==1) {
+#else
+			if ((currread = fscanf(file->fh, "%lf", &m))==1) {
 #endif
 				if ((i==1)||(i==2)) m=0.0;
 				moment[readcount][i]=m;

@@ -12,5 +12,8 @@ void hvserror(int status, const char *string) {
 		case HVS_ERR_IRREGULAR_GRID:
 			fprintf(stderr, "%s: This version doesn't support irregular grids for initial data.\n", string);
 			break;
+		case HVS_ERR_WRONG_SIZE:
+			fprintf(stderr, "%s: Given data is not rectangular.\n", string);
+			break;
 	}
 }

@@ -19,7 +19,7 @@ AC_CHECK_LIB(m, pow)
 AC_CHECK_LIB(m, sqrt)
 
 # Checks for header files.
-AC_CHECK_HEADERS([stdio.h string.h stdlib.h math.h unistd.h])
+AC_CHECK_HEADERS([stdio.h string.h stdlib.h math.h unistd.h float.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T

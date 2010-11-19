@@ -60,7 +60,7 @@ int gmres(const FLOAT_TYPE *A, const FLOAT_TYPE *x0, const FLOAT_TYPE *b, UINT s
 		if((status = vect_matrixmultsub(A,result,bnorm,size,tmp))!=HVS_OK) {
 			return status;
 		}
-		if(M_ABS(beta-M_SQRT(vect_normsq(tmp,size)))<0.000001) {
+		if(M_ABS(beta-M_SQRT(vect_normsq(tmp,size)))<HVS_EPS) {
 			for(i=0;i<size;i++) result[i]*=0.9;
 			continue;
 		}
@@ -203,7 +203,7 @@ int arnoldi(const FLOAT_TYPE *A, UINT m, UINT n, FLOAT_TYPE *H,
 		}
 	}
 	H[n*n+n-1]=M_SQRT(vect_normsq(&Q[n*m],m));
-	if (H[n*n+n-1]>=0.0000001) {
+	if (H[n*n+n-1]>=HVS_EPS) {
 		if((status=vect_scalarmult(1/H[n*n+n-1],&Q[n*m],m,&Q[n*m]))!=HVS_OK) {
 			return status;
 		}
