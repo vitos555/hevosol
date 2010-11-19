@@ -19,14 +19,14 @@ AC_CHECK_LIB(m, pow)
 AC_CHECK_LIB(m, sqrt)
 
 # Checks for header files.
-AC_CHECK_HEADERS([stdio.h string.h stdlib.h math.h])
+AC_CHECK_HEADERS([stdio.h string.h stdlib.h math.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T
 
 # Checks for library functions.
 AC_FUNC_MALLOC
-AC_CHECK_FUNCS([memset memcpy])
+AC_CHECK_FUNCS([memset memcpy getopt])
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile])

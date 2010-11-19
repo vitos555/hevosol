@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -35,7 +36,7 @@ int main(int argc, char **argv) {
 	params.initmomentsfile = NULL;
 
 	opterr = 0; 
-	while ((c = getopt (argc, argv, "hqv::c::t:l:n:b:e:m::o:x::y::")) != -1)
+	while ((c = getopt(argc, argv, "hqv::c::t:l:n:b:e:m::o:x::y::")) != -1)
 		switch (c)
 		{
 		case 'v':
