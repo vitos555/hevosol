@@ -48,7 +48,7 @@ ssize_t read_vorticity(const hvs_file *file, size_t count, hvs_position *pos, hv
 	return readcount;
 }
 
-ssize_t read_centers(const hvs_file *file, size_t count, hvs_center *pos) {
+ssize_t read_centers(const hvs_file *file, size_t count, hvs_centers pos) {
 	int readcount = 0;
 	int currread = 0;
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE

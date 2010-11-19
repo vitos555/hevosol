@@ -1,5 +1,6 @@
 #include "vectorutil.h"
 #include "errorutil.h"
+#include <math.h>
 
 FLOAT_TYPE vect_dotproduct(const FLOAT_TYPE *x, const FLOAT_TYPE *y, UINT n) {
 	FLOAT_TYPE retval=0;

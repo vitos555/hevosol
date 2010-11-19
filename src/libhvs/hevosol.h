@@ -108,7 +108,7 @@ typedef struct {
 } hvs_ode_data;
 
 int init_solver(const hvs_params *params, hvs_state **sstate);
-int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_centers centers, const hvs_moments moments,
+int init_solver_by_moments(const hvs_params *params, UINT ncenters, const hvs_centers centers, const hvs_moments moments,
 				hvs_state **sstate);
 void free_solver(hvs_state **sstate);
 int run_solver(const hvs_params *params, hvs_state *state);

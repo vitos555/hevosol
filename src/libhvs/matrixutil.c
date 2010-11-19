@@ -1,6 +1,7 @@
 #include "matrixutil.h"
 #include "errorutil.h"
 #include <stdlib.h>
+#include <math.h>
 
 int matrix_multiply(const FLOAT_TYPE *A1, UINT m1, UINT n1, 
 			const FLOAT_TYPE *A2, UINT m2, UINT n2, FLOAT_TYPE *result) {

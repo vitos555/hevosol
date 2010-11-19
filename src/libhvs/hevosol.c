@@ -18,7 +18,7 @@
 #error "Currently implemented only 4 moments."
 #endif
 
-int init_solver_by_moments(hvs_params *params, UINT ncenters, const hvs_centers centers, const hvs_moments moments,
+int init_solver_by_moments(const hvs_params *params, UINT ncenters, const hvs_centers centers, const hvs_moments moments,
 				hvs_state **sstate) {
 	hvs_state* state = (hvs_state *) malloc(sizeof(hvs_state));
 	int i, j;
@@ -128,6 +128,7 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 	UINT cursize = 0;
 	hvs_state* state = NULL;
 	hvs_moments moments = NULL;
+	hvs_centers centers = NULL;
 	if (params->initvortfile==NULL)
 		if (params->initmomentsfile==NULL)
 			return HVS_ERR_WRONG_USAGE;
@@ -139,21 +140,21 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 			// Read data
 			do {
 				cursize += status;
-				if ((pos = (hvs_position *)realloc(pos, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_position)))==NULL) {
+				if ((centers = (hvs_position *)realloc(centers, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_center)))==NULL) {
 					return HVS_ERR;
 				}
 				if ((moments = realloc(moments, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_moment)))==NULL) {
 					return HVS_ERR;
 				}
 			} while ((status = read_moments(file,HVS_READ_BLOCK_SIZE,
-				pos+cursize*sizeof(hvs_position),
+				centers+cursize*sizeof(hvs_position),
 				moments+cursize*sizeof(hvs_moment))) == HVS_READ_BLOCK_SIZE);
 			if (status < 0) {
 				return status;
 			}
 			cursize += status;
 			closefile(&file);
-			return init_solver_by_moments(params, cursize, pos, moments, sstate);
+			return init_solver_by_moments(params, cursize, centers, moments, sstate);
 		}
 
 	// Init file handler
