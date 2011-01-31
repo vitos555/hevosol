@@ -7,6 +7,8 @@
 #include "libhvs/vectorutil.h"
 
 #define OUTFILE "test.out"
+#define LF(x) (long double)((x))
+
 
 int main() {
 	hvs_state* state;
@@ -32,12 +34,18 @@ printf("Else\n");
 	
 	res = vect_normsq(vect_x,3);
 	gmres(matrix_test,vect_y,vect_x,3,(FLOAT_TYPE)0.01,vector_test);
-	printf("Res=(%Lf,%Lf,%Lf)\n",vector_test[0],vector_test[1],vector_test[2]);
+	printf("Res=(%Lf,%Lf,%Lf)\n",LF(vector_test[0]),LF(vector_test[1]),LF(vector_test[2]));
 	
 	params.initvortfile = "test";
 	params.timestep = 0.001;
 	params.lambda0 = 1.0;
 	params.nu = 0.1;
+	params.xmin = -5.0;
+	params.xmax = 5.0;
+	params.xstep = 0.1;
+	params.ymin = -5.0;
+	params.ymax = 5.0;
+	params.ystep = 0.1;
 	hvs_center centers[] = {{1.0,0.0},{0.0,0.0},{-1.0,0.0}};
 	hvs_moment moment1 = {-2.0,0.0,0.0,0.0,0.0,0.0};
 	hvs_moment moment2 = {1.0,0.0,0.0,0.0,0.0,0.0};
@@ -46,8 +54,7 @@ printf("Else\n");
 	memcpy(moments[1],moment2,sizeof(hvs_moment));
 	memcpy(moments[2],moment1,sizeof(hvs_moment));
 	if ((status = init_solver_by_moments(&params, 3, centers, moments,
-				-5.0, 5.0, 0.1, 
-				-5.0, 5.0, 0.1, &state)) != HVS_OK) {
+				&state)) != HVS_OK) {
 		hvserror(status, "Init error");
 		return 0;
 	}
@@ -58,15 +65,15 @@ printf("Else\n");
 		params.t1 = 0.1*(i+1);
 		if ((status = run_solver(&params, state)) == HVS_OK) {
 			printf("Centers: (%.4Lf,%.4Lf),(%.4Lf,%.4Lf)\n", 
-				state->centers[0].x,state->centers[0].y,
-				state->centers[1].x,state->centers[1].y);
+				LF(state->centers[0].x),LF(state->centers[0].y),
+				LF(state->centers[1].x),LF(state->centers[1].y));
 			printf("Moments: (%Lf,%Lf,%Lf), (%Lf,%Lf,%Lf)\n",
-				state->moments[0][MOM_INDEX(0,0)],
-				state->moments[0][MOM_INDEX(0,2)],
-				state->moments[0][MOM_INDEX(2,0)],
-				state->moments[1][MOM_INDEX(0,0)],
-				state->moments[1][MOM_INDEX(0,2)],
-				state->moments[1][MOM_INDEX(2,0)]);
+				LF(state->moments[0][MOM_INDEX(0,0)]),
+				LF(state->moments[0][MOM_INDEX(0,2)]),
+				LF(state->moments[0][MOM_INDEX(2,0)]),
+				LF(state->moments[1][MOM_INDEX(0,0)]),
+				LF(state->moments[1][MOM_INDEX(0,2)]),
+				LF(state->moments[1][MOM_INDEX(2,0)]));
 			if ((i+1)%10==0) {
 				append_vorticity(state,OUTFILE);
 //				append_centers(state,OUTFILE);
@@ -81,8 +88,8 @@ printf("Else\n");
 	x=0.7;
 	y=2.301;
 	l=15.5;
-	printf("hb1(%Lf,%Lf,%Lf,3,2)=%.16Lg\n",x,y,l*l,hb1(x,y,l*l,3,2));
-	printf("hb1(%Lf,%Lf,%Lf,2,3)=%.16Lg\n",x,y,l*l,hb1(x,y,l*l,2,3));
-	printf("hb1(%Lf,%Lf,%Lf,3,3)=%.16Lg\n",x,y,l*l,hb1(x,y,l*l,3,3));
+	printf("hb1(%Lf,%Lf,%Lf,3,2)=%.16Lg\n",LF(x),LF(y),LF(l*l),LF(hb1(x,y,l*l,3,2)));
+	printf("hb1(%Lf,%Lf,%Lf,2,3)=%.16Lg\n",LF(x),LF(y),LF(l*l),LF(hb1(x,y,l*l,2,3)));
+	printf("hb1(%Lf,%Lf,%Lf,3,3)=%.16Lg\n",LF(x),LF(y),LF(l*l),LF(hb1(x,y,l*l,3,3)));
 	return 0;
 }

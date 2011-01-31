@@ -4,6 +4,8 @@
 #include "libhvs/errorutil.h"
 #include "libhvs/matrixutil.h"
 
+#define LF(x) (long double)((x))
+
 int main() {
 	int status,i;
 	FLOAT_TYPE x,y,l;
@@ -17,7 +19,9 @@ int main() {
 	FLOAT_TYPE vector_test[3];
 
 	printf("%Lf\t%Lf\t%Lf\n%Lf\t%Lf\t%Lf\n%Lf\t%Lf\t%Lf\n\n",
-		m3[0],m3[1],m3[2],m3[3],m3[4],m3[5],m3[6],m3[7],m3[8]);
+		LF(m3[0]),LF(m3[1]),LF(m3[2]),
+		LF(m3[3]),LF(m3[4]),LF(m3[5]),
+		LF(m3[6]),LF(m3[7]),LF(m3[8]));
 //	printf("%Lf\t%Lf\n%Lf%Lf\n%Lf\t%Lf\n\n",
 //		m[0],m[1],m[2],m[3],m[4],m[5]);
 //	if((status = ols(m,vy,3,2,vector_test))!=HVS_OK) {
