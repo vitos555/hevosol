@@ -49,7 +49,7 @@ printf("Else\n");
 	hvs_center centers[] = {{1.0,0.0},{0.0,0.0},{-1.0,0.0}};
 	hvs_moment moment1 = {-2.0,0.0,0.0,0.0,0.0,0.0};
 	hvs_moment moment2 = {1.0,0.0,0.0,0.0,0.0,0.0};
-	hvs_moment moments[3];;
+	hvs_moment moments[3];
 	memcpy(moments[0],moment1,sizeof(hvs_moment));
 	memcpy(moments[1],moment2,sizeof(hvs_moment));
 	memcpy(moments[2],moment1,sizeof(hvs_moment));

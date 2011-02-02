@@ -179,7 +179,7 @@ void usage(FILE *fh,char **argv) {
 	fprintf(fh, "-v file\t\tVorticity data file.\n");
 	fprintf(fh, "-m file\t\tMoments data file.\n");
 	fprintf(fh, "-o file\t\tOutput file name.\n");
-	fprintf(fh, "-t float\tIntegration time step. Default: 0.01:1.\n");
+	fprintf(fh, "-t float\tIntegration time step. Default: 0.01.\n");
 	fprintf(fh, "-p number\tNumber of integration time steps between vorticity\n");
 	fprintf(fh, "\t\tfield outputs. Default: 0 (output vorticity only\n");
 	fprintf(fh, "\t\tat the beginning and at the end).\n");
