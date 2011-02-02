@@ -32,10 +32,6 @@ printf("Else\n");
 	FLOAT_TYPE vector_test[3],vect_x[]={-1.0,2.0,1.0},vect_y[]={1.0,0.0,0.0};
 	FLOAT_TYPE res;
 	
-	res = vect_normsq(vect_x,3);
-	gmres(matrix_test,vect_y,vect_x,3,(FLOAT_TYPE)0.01,vector_test);
-	printf("Res=(%Lf,%Lf,%Lf)\n",LF(vector_test[0]),LF(vector_test[1]),LF(vector_test[2]));
-	
 	params.initvortfile = "test";
 	params.timestep = 0.001;
 	params.lambda0 = 1.0;
