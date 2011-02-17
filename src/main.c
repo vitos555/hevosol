@@ -149,6 +149,8 @@ int main(int argc, char **argv) {
 			params.t1=MIN(t+num*params.timestep,t2);
 			if ((status = run_solver(&params, state)) == HVS_OK) {
 				// Write vorticity to output file
+	append_centers(state,outfile);
+	append_moments(state,outfile);
 				append_vorticity(state,outfile);
 			} else {
 				hvserror(status,"Run error");
@@ -158,6 +160,8 @@ int main(int argc, char **argv) {
 	} else {
 		if ((status = run_solver(&params, state)) == HVS_OK) {
 			// Write vorticity to output file
+	append_centers(state,outfile);
+	append_moments(state,outfile);
 			append_vorticity(state,outfile);
 		} else {
 			hvserror(status,"Run error");
