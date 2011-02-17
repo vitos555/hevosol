@@ -1,5 +1,6 @@
 #include "hevosol.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 void hvserror(int status, const char *string) {
 	switch(status) {
@@ -16,4 +17,9 @@ void hvserror(int status, const char *string) {
 			fprintf(stderr, "%s: Given data is not rectangular.\n", string);
 			break;
 	}
+}
+
+void hvsdie(const char *string) {
+    perror(string);
+    exit(1);
 }

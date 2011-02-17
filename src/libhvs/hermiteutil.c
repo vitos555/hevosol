@@ -4,6 +4,7 @@
 
 #if HVS_DEBUG
 #include<stdio.h>
+#include "errorutil.h"
 #endif
 
 #define PI_INV 1/M_PI
@@ -54,20 +55,31 @@ FLOAT_TYPE he_11(FLOAT_TYPE x1, FLOAT_TYPE x2, FLOAT_TYPE lambda_sq) {
 }
 
 FLOAT_TYPE he(FLOAT_TYPE x1, FLOAT_TYPE x2, FLOAT_TYPE lambda_sq, unsigned short k1, unsigned short k2) {
+	FLOAT_TYPE ret;
 	if ( (k1==0) && (k2==0) )
-		return he_00(x1,x2,lambda_sq);
+		ret = he_00(x1,x2,lambda_sq);
 	else if ( (k1==1) && (k2==0) )
-		return he_10(x1,x2,lambda_sq);
+		ret = he_10(x1,x2,lambda_sq);
 	else if ( (k1==0) && (k2==1) )
-		return he_01(x1,x2,lambda_sq);
+		ret = he_01(x1,x2,lambda_sq);
 	else if ( (k1==2) && (k2==0) )
-		return he_20(x1,x2,lambda_sq);
+		ret = he_20(x1,x2,lambda_sq);
 	else if ( (k1==1) && (k2==1) )
-		return he_11(x1,x2,lambda_sq);
+		ret = he_11(x1,x2,lambda_sq);
 	else if ( (k1==0) && (k2==2) )
-		return he_02(x1,x2,lambda_sq);
-	else
-		return 0.0;
+		ret = he_02(x1,x2,lambda_sq);
+	else {
+#if HVS_DEBUG
+		hvsdie("Error. Function he: Parameters out of range\n");
+#endif
+		ret = 0.0;
+	}
+#if HVS_DEBUG
+	if (isnan(ret)) {
+		hvsdie("Error. Function he: NaN.\n");
+	}
+#endif
+	return ret;
 }
 
 FLOAT_TYPE h1(UINT alpha1, UINT alpha2, FLOAT_TYPE lambda_sq) {
@@ -79,6 +91,9 @@ FLOAT_TYPE h1(UINT alpha1, UINT alpha2, FLOAT_TYPE lambda_sq) {
 			factorial(alpha1)/factorial(alpha_temp+1)*
 			factorial(alpha2)*binomial(alpha_temp,(int)alpha1/2);
 	} else {
+#if HVS_DEBUG
+		hvsdie("Error. Function h1: Parameters out of range\n");
+#endif
 		return 0.0;
 	}
 }
@@ -92,6 +107,9 @@ FLOAT_TYPE h2(UINT alpha1, UINT alpha2,FLOAT_TYPE lambda_sq) {
 			factorial(alpha1)/factorial(alpha_temp+1)*
 			factorial(alpha2)*binomial(alpha_temp,(UINT)(alpha1-1)/2);
 	} else {
+#if HVS_DEBUG
+		hvsdie("Error. Function h2: Parameters out of range\n");
+#endif
 		return 0.0;
 	}
 }
@@ -674,6 +692,7 @@ Power(x2,2),11));
 	else {
 #if HVS_DEBUG
 		printf("Err:%d,%d\n",k1,k2);
+		hvsdie("Error. Function hb1.\n");
 #endif
 		return 0.0;
 	}
@@ -1259,6 +1278,7 @@ Power(x2,2),11));
 	else {
 #if HVS_DEBUG
 		printf("Err:%d,%d\n",k1,k2);
+		hvsdie("Error. Function hb2.\n");
 #endif
 		return 0.0;
 	}
