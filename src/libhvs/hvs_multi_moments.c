@@ -70,7 +70,7 @@ int init_moments(hvs_state *state) {
 					   state->grid[i].y-state->centers[j].y,
 					   state->lambdasq,
 					   0,0);
-	if ((status=gmres(A,x,state->vorticity_field,state->size,0.0001,20,x))!=HVS_OK) {
+	if ((status=gmres(A,x,state->vorticity_field,state->size,(FLOAT_TYPE)0.0001,20,x))!=HVS_OK) {
 		free(A);
 		free(x);
 		return status;
