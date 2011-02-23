@@ -92,8 +92,8 @@ int eval_eq(hvs_ode_data *input, hvs_ode_data *output, hvs_coefs *coefs, FLOAT_T
 
 	// First evaluate centers equation
 	for (i0=0; i0<input->ncenters; i0++) {
-		output->centers[i0].x=0.0;
-		output->centers[i0].y=0.0;
+		output->centers[i0].x=(FLOAT_TYPE)0.0;
+		output->centers[i0].y=(FLOAT_TYPE)0.0;
 		for(j0=0; j0<input->ncenters; j0++) {
 		if (i0==j0) continue;
 		for(l=0;l<NCOMBS;l++) {
@@ -104,7 +104,7 @@ int eval_eq(hvs_ode_data *input, hvs_ode_data *output, hvs_coefs *coefs, FLOAT_T
 				m2=COMBS_IND2(m);
 				output->centers[i0].x += 
 				input->moments[j0][MOM_INDEX(l1,l2)]*
-				input->moments[j0][MOM_INDEX(m1,m2)]*
+				input->moments[i0][MOM_INDEX(m1,m2)]*
 				POWN1(m1+m2)*
 				hb1(
 				input->centers[i0].x-input->centers[j0].x,
