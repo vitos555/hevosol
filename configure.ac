@@ -15,6 +15,34 @@ AC_PROG_LIBTOOL
 
 AC_OPENMP
 
+ac_openmp30=no
+if test -n "${OPENMP_CFLAGS}"; then
+    AC_MSG_CHECKING([for support of OpenMP 3.0])
+    ac_save_CFLAGS=$CFLAGS
+    CFLAGS="${CFLAGS} ${OPENMP_CFLAGS}"
+    AC_LINK_IFELSE( [AC_LANG_PROGRAM([
+#include <omp.h>
+    ],
+    [[
+int main() {
+    int i,j,k[100];
+#pragma omp parallel for collapse(2) private(i,j) shared(k)
+    for(i=0;i<10;i++)
+	for(j=0;j<10;j++) {
+		k[i*10+j]=1;
+	}
+    return 0;
+}
+    ]])], [ac_openmp30=yes],[ac_openmp30=no] )
+    CFLAGS=$ac_save_CFLAGS
+    AC_MSG_RESULT([$ac_openmp30])
+fi
+
+if test "${ac_openmp30}" = "no"; then
+    OPENMP_CFLAGS=""
+    AC_MSG_WARN([OpenMP 3.0 is not supported])
+fi
+
 # Checks for libraries.
 AC_CHECK_LIB(m, exp)
 AC_CHECK_LIB(m, pow)

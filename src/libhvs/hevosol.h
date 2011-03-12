@@ -49,7 +49,7 @@
 #define MOM_INDEX(i,j) (((i)+(j))*((i)+(j)+1)/2+(j))
 
 #define HVS_GMRES_PRECISION (FLOAT_TYPE)1e-10
-#define HVS_GMRES_ITERATIONS 100
+#define HVS_GMRES_ITERATIONS 250
 
 #include <unistd.h>
 
