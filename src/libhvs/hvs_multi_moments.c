@@ -35,11 +35,11 @@ int free_ode_data(hvs_ode_data *data) {
 int update_vorticity_field(hvs_state *state) {
 	int i,j;
 	FLOAT_TYPE sum;
-	#pragma omp parallel for private(i)
+	#pragma omp parallel for private(i) shared(state)
 	for (i=0; i<state->size; i++) {
 		sum = 0.0;
 		#pragma omp barier
-		#pragma omp parallel for reduction(+:sum) private(j)
+		#pragma omp parallel for reduction(+:sum) private(j) shared(state)
 		for (j=0; j<state->ncenters; j++) {
 			sum += 	state->moments[j][MOM_INDEX(0,0)]*he(state->grid[i].x-state->centers[j].x,state->grid[i].y-state->centers[j].y,state->lambdasq,0,0)+
 				state->moments[j][MOM_INDEX(1,1)]*he(state->grid[i].x-state->centers[j].x,state->grid[i].y-state->centers[j].y,state->lambdasq,1,1)+
@@ -210,12 +210,10 @@ int rk4_hvs_solve(hvs_state *curdata, FLOAT_TYPE tn, FLOAT_TYPE timestep, FLOAT_
 	memcpy(kt.centers,curdata->centers,sizeof(hvs_center)*curdata->ncenters);
 
 	// Initialize k1,k2,k3,k4 - rk4 function evaluations
-	{
-		status&=init_ode_data(&k1,curdata);
-		status&=init_ode_data(&k2,curdata);
-		status&=init_ode_data(&k3,curdata);
-		status&=init_ode_data(&k4,curdata);
-	}
+	status&=init_ode_data(&k1,curdata);
+	status&=init_ode_data(&k2,curdata);
+	status&=init_ode_data(&k3,curdata);
+	status&=init_ode_data(&k4,curdata);
 	if (status!=HVS_OK) {
 		return status;
 	}
