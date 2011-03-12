@@ -31,10 +31,9 @@ int free_ode_data(hvs_ode_data *data) {
 	return HVS_OK;
 }
 
-int update_vorticity_field(hvs_state *state, const hvs_params *params) {
+int update_vorticity_field(hvs_state *state) {
 	int i,j;
 	FLOAT_TYPE sum;
-	FLOAT_TYPE lambda_sq = params->lambda0*params->lambda0;
 	for (i=0; i<state->size; i++) {
 		sum = 0.0;
 		for (j=0; j<state->ncenters; j++) {
@@ -70,7 +69,7 @@ int init_moments(hvs_state *state) {
 					   state->grid[i].y-state->centers[j].y,
 					   state->lambdasq,
 					   0,0);
-	if ((status=gmres(A,x,state->vorticity_field,state->size,(FLOAT_TYPE)0.0001,20,x))!=HVS_OK) {
+	if ((status=gmres(A,x,state->vorticity_field,state->size,HVS_GMRES_PRECISION,HVS_GMRES_ITERATIONS,x))!=HVS_OK) {
 		free(A);
 		free(x);
 		return status;
