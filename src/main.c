@@ -54,35 +54,35 @@ int main(int argc, char **argv) {
 			break;
 		case 't':
 			sscanf(optarg,"%f",&t);
-			params.timestep=t;
+			params.timestep=(FLOAT_TYPE)t;
 			break;
 		case 'l':
 			sscanf(optarg,"%f",&t);
-			params.lambda0=t;
+			params.lambda0=(FLOAT_TYPE)t;
 			break;
 		case 'n':
 			sscanf(optarg,"%f",&t);
-			params.nu=t;
+			params.nu=(FLOAT_TYPE)t;
 			break;
 		case 'b':
 			sscanf(optarg,"%f",&t);
-			params.t0=t;
+			params.t0=(FLOAT_TYPE)t;
 			break;
 		case 'e':
 			sscanf(optarg,"%f",&t);
-			params.t1=t;
+			params.t1=(FLOAT_TYPE)t;
 			break;
 		case 'x':
 			sscanf(optarg,"%f:%f:%f",&t,&t1,&t2);
-			params.xmin=t;
-			params.xmax=t2;
-			params.xstep=t1;
+			params.xmin=(FLOAT_TYPE)t;
+			params.xmax=(FLOAT_TYPE)t2;
+			params.xstep=(FLOAT_TYPE)t1;
 			break;
 		case 'y':
 			sscanf(optarg,"%f:%f:%f",&t,&t1,&t2);
-			params.xmin=t;
-			params.ymax=t2;
-			params.ystep=t1;
+			params.xmin=(FLOAT_TYPE)t;
+			params.ymax=(FLOAT_TYPE)t2;
+			params.ystep=(FLOAT_TYPE)t1;
 			break;
 		case 'h':
 			usage(stdout,argv);
@@ -132,11 +132,13 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 	
-	// Integrate
-	update_vorticity_field(state,&params);
+	// Output initial state
+	update_vorticity_field(state);
 	append_centers(state,outfile);
 	append_moments(state,outfile);
 	append_vorticity(state,outfile);
+	
+	//Integrate
 	t1=params.t0;
 	t2=params.t1;
 	if (t1>t2) {
@@ -148,9 +150,9 @@ int main(int argc, char **argv) {
 			params.t0=t;
 			params.t1=MIN(t+num*params.timestep,t2);
 			if ((status = run_solver(&params, state)) == HVS_OK) {
-				// Write vorticity to output file
-	append_centers(state,outfile);
-	append_moments(state,outfile);
+				// Write info to output file
+				append_centers(state,outfile);
+				append_moments(state,outfile);
 				append_vorticity(state,outfile);
 			} else {
 				hvserror(status,"Run error");
@@ -159,9 +161,9 @@ int main(int argc, char **argv) {
 		}
 	} else {
 		if ((status = run_solver(&params, state)) == HVS_OK) {
-			// Write vorticity to output file
-	append_centers(state,outfile);
-	append_moments(state,outfile);
+			// Write info to output file
+			append_centers(state,outfile);
+			append_moments(state,outfile);
 			append_vorticity(state,outfile);
 		} else {
 			hvserror(status,"Run error");
