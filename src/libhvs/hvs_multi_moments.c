@@ -210,15 +210,10 @@ int rk4_hvs_solve(hvs_state *curdata, FLOAT_TYPE tn, FLOAT_TYPE timestep, FLOAT_
 	memcpy(kt.centers,curdata->centers,sizeof(hvs_center)*curdata->ncenters);
 
 	// Initialize k1,k2,k3,k4 - rk4 function evaluations
-	#pragma omp parallel sections shared(status)
 	{
-		#pragma omp section
 		status&=init_ode_data(&k1,curdata);
-		#pragma omp section
 		status&=init_ode_data(&k2,curdata);
-		#pragma omp section
 		status&=init_ode_data(&k3,curdata);
-		#pragma omp section
 		status&=init_ode_data(&k4,curdata);
 	}
 	if (status!=HVS_OK) {
