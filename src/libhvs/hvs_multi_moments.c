@@ -27,8 +27,12 @@ int init_ode_data(hvs_ode_data *data, hvs_state *input) {
 }
 
 int free_ode_data(hvs_ode_data *data) {
-	free(data->moments);
-	free(data->centers);
+	if (data->moments != NULL)
+	    free(data->moments);
+	data->moments = NULL;
+	if (data->centers != NULL)
+	    free(data->centers);
+	data->centers = NULL;
 	return HVS_OK;
 }
 
