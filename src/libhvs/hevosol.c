@@ -115,7 +115,7 @@ int init_solver_by_moments(const hvs_params *params, UINT ncenters, const hvs_ce
 	init_coefs(state->coefs);
 
 	// We have moments and thus we can update vorticity field
-	update_vorticity_field(state, params);
+	update_vorticity_field(state);
 	(*sstate) = state;
 	return HVS_OK;
 }
@@ -305,8 +305,6 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 	memset(state->coefs, 0, sizeof(hvs_coefs));
 	init_coefs(state->coefs);
 
-	state->lambdasq = params->lambda0*params->lambda0;
-
 	*sstate = state;
 	return HVS_OK;
 }
@@ -355,7 +353,7 @@ int run_solver(const hvs_params *params, hvs_state *state) {
 		}
 	}
 	state->curtime = tn;
-	return update_vorticity_field(state, params);
+	return update_vorticity_field(state);
 }
 
 int checkgrid(hvs_position *pos, hvs_vorticity *vort) {
