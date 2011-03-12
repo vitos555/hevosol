@@ -67,7 +67,7 @@ int init_moments(hvs_state *state) {
 		return HVS_ERR;
 	}
 	memset(x,0,sizeof(FLOAT_TYPE)*state->size);
-	#pragma omp parallel for private(i)
+	#pragma omp parallel for private(i) shared(A)
 	for(i=0;i<state->size;i++)
 		for(j=0;j<state->size;j++)
 				A[state->size*i+j] = 
@@ -96,7 +96,7 @@ int eval_eq(hvs_ode_data *input, hvs_ode_data *output, hvs_coefs *coefs, FLOAT_T
 	output->lambdasq = input->lambdasq;
 
 	// First evaluate centers equation
-	#pragma omp parallel for private(i0) shared(input,output)
+	#pragma omp parallel for private(i0) shared(input,output,coefs,time)
 	for (i0=0; i0<input->ncenters; i0++) {
 		output->centers[i0].x=(FLOAT_TYPE)0.0;
 		output->centers[i0].y=(FLOAT_TYPE)0.0;
@@ -135,7 +135,7 @@ int eval_eq(hvs_ode_data *input, hvs_ode_data *output, hvs_coefs *coefs, FLOAT_T
 	}
 	
 	// Now get the moments equations
-	#pragma omp parallel for private(i0) shared(input,output)
+	#pragma omp parallel for private(i0) shared(input,output,coefs,time)
 	for (i0=0; i0<input->ncenters; i0++) {
 		for(j0=0; j0<input->ncenters; j0++)
 			for(k=0;k<NCOMBS;k++) {
