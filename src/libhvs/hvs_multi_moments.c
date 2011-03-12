@@ -199,7 +199,7 @@ gamma2+=coefs->gamma2[COEF_INDEX(k1,k2,l1,l2,m1,m2,i,j)]/
 
 int rk4_hvs_solve(hvs_state *curdata, FLOAT_TYPE tn, FLOAT_TYPE timestep, FLOAT_TYPE nu) {
 	hvs_ode_data k1, k2, k3, k4, kt;
-	int status;
+	int status = HVS_OK;
 	int i0,i,i1,i2;
 
 	// Initialize temporary variable for moments and centers
@@ -210,24 +210,19 @@ int rk4_hvs_solve(hvs_state *curdata, FLOAT_TYPE tn, FLOAT_TYPE timestep, FLOAT_
 	memcpy(kt.centers,curdata->centers,sizeof(hvs_center)*curdata->ncenters);
 
 	// Initialize k1,k2,k3,k4 - rk4 function evaluations
-	#pragma omp parallel sections
+	#pragma omp parallel sections shared(status)
 	{
 		#pragma omp section
-		if ((status=init_ode_data(&k1,curdata))!=HVS_OK) {
-			return status;
-		}
+		status&=init_ode_data(&k1,curdata);
 		#pragma omp section
-		if ((status=init_ode_data(&k2,curdata))!=HVS_OK) {
-			return status;
-		}
+		status&=init_ode_data(&k2,curdata);
 		#pragma omp section
-		if ((status=init_ode_data(&k3,curdata))!=HVS_OK) {
-			return status;
-		}
+		status&=init_ode_data(&k3,curdata);
 		#pragma omp section
-		if ((status=init_ode_data(&k4,curdata))!=HVS_OK) {
-			return status;
-		}
+		status&=init_ode_data(&k4,curdata);
+	}
+	if (status!=HVS_OK) {
+		return status;
 	}
 	
 	// Get k1

@@ -1,3 +1,5 @@
+CFLAGS = -g -O2 ${OPENMP_CFLAGS}
+
 bin_PROGRAMS = solver
 check_PROGRAMS = testsolver testmatrixutil testgmres
 
