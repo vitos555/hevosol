@@ -39,7 +39,11 @@ int free_ode_data(hvs_ode_data *data) {
 int update_vorticity_field(hvs_state *state) {
 	int i,j;
 	FLOAT_TYPE sum;
-	#pragma omp parallel for private(i) shared(state)
+
+#if HVS_DEBUG
+	printf("update_vorticity_field\n");
+#endif
+
 	for (i=0; i<state->size; i++) {
 		sum = 0.0;
 		#pragma omp barier
@@ -71,7 +75,7 @@ int init_moments(hvs_state *state) {
 		return HVS_ERR;
 	}
 	memset(x,0,sizeof(FLOAT_TYPE)*state->size);
-	#pragma omp parallel for private(i) shared(A)
+	#pragma omp parallel for collapse(2) private(i,j) shared(A)
 	for(i=0;i<state->size;i++)
 		for(j=0;j<state->size;j++)
 				A[state->size*i+j] = 
@@ -99,8 +103,15 @@ int eval_eq(hvs_ode_data *input, hvs_ode_data *output, hvs_coefs *coefs, FLOAT_T
 	int i0,j0,k,k1,k2,l,l1,l2,m,m1,m2,i,j;
 	output->lambdasq = input->lambdasq;
 
+#if HVS_DEBUG
+	printf("eval_eq\n");
+#endif
+
+	// Parallelize execution
+	#pragma omp parallel default(none) shared(input,output,coefs,time,lambdasq)
+	{
 	// First evaluate centers equation
-	#pragma omp parallel for private(i0) shared(input,output,coefs,time)
+	#pragma omp for private(i0,j0,l,m,l1,l2,m1,m2)
 	for (i0=0; i0<input->ncenters; i0++) {
 		output->centers[i0].x=(FLOAT_TYPE)0.0;
 		output->centers[i0].y=(FLOAT_TYPE)0.0;
@@ -139,7 +150,7 @@ int eval_eq(hvs_ode_data *input, hvs_ode_data *output, hvs_coefs *coefs, FLOAT_T
 	}
 	
 	// Now get the moments equations
-	#pragma omp parallel for private(i0) shared(input,output,coefs,time)
+	#pragma omp for collapse(2)  private(i0,j0,l,m,k,k1,k2,l1,l2,m1,m2,gamma1,gamma2,i,j) 
 	for (i0=0; i0<input->ncenters; i0++) {
 		for(j0=0; j0<input->ncenters; j0++)
 			for(k=0;k<NCOMBS;k++) {
@@ -197,7 +208,8 @@ gamma2+=coefs->gamma2[COEF_INDEX(k1,k2,l1,l2,m1,m2,i,j)]/
 							input->moments[i0][MOM_INDEX(k1,k2-1)];
 				}
 			}
-	}
+	} // end for
+	} // end pragma omp parallel
 	return HVS_OK;
 }
 
@@ -205,6 +217,10 @@ int rk4_hvs_solve(hvs_state *curdata, FLOAT_TYPE tn, FLOAT_TYPE timestep, FLOAT_
 	hvs_ode_data k1, k2, k3, k4, kt;
 	int status = HVS_OK;
 	int i0,i,i1,i2;
+
+#if HVS_DEBUG
+	printf("rk4_hvs_solve\n");
+#endif
 
 	// Initialize temporary variable for moments and centers
 	if ((status=init_ode_data(&kt,curdata))!=HVS_OK) {
@@ -301,8 +317,8 @@ int rk4_hvs_solve(hvs_state *curdata, FLOAT_TYPE tn, FLOAT_TYPE timestep, FLOAT_
 		curdata->centers[i0].y = curdata->centers[i0].y+1.0/6*timestep*(k1.centers[i0].y+2*k2.centers[i0].y+2*k3.centers[i0].y+k4.centers[i0].y);
 	}
 	curdata->lambdasq += 4.0*timestep*nu;
-	
-	// Free all the intermediate values
+
+	// Free all the Intermediate values
 	free_ode_data(&kt);
 	free_ode_data(&k1);
 	free_ode_data(&k2);
@@ -319,6 +335,11 @@ int rk4_hvs_solve(hvs_state *curdata, FLOAT_TYPE tn, FLOAT_TYPE timestep, FLOAT_
 
 int init_coefs(hvs_coefs *coefs) {
 	int k,k1,k2,m,m1,m2,l,l1,l2,i,j;
+
+#if HVS_DEBUG
+	printf("init_coefs\n");
+#endif
+	#pragma omp parallel for default(none) shared(coefs) private(k,k1,k2,l,l1,l2,m,m1,m2,i,j)
 	for(k=0;k<NCOMBS;k++) {
 		k1=COMBS_IND1(k);
 		k2=COMBS_IND2(k);
@@ -349,6 +370,11 @@ coefs->gamma2[COEF_INDEX(k1,k2,l1,l2,m1,m2,i,j)]=(FLOAT_TYPE)POWN1(l1+l2)*
 
 int step_solver(hvs_state *state, FLOAT_TYPE *tn, const hvs_params *params) {
 	int i,status;
+
+#if HVS_DEBUG
+	printf("step_solver, t=%f\n",(float)(*tn));
+#endif
+
 	if ((status = rk4_hvs_solve(state, (*tn), params->timestep, params->nu))!=HVS_OK) {
 		return status;
 	}
