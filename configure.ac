@@ -13,6 +13,8 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_PROG_CC
 AC_PROG_LIBTOOL
 
+AC_OPENMP
+
 # Checks for libraries.
 AC_CHECK_LIB(m, exp)
 AC_CHECK_LIB(m, pow)
