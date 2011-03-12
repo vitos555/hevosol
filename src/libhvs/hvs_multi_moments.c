@@ -1,7 +1,8 @@
 //
-// Copyright (C) 2010, Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
+// Copyright (C) 2010-2011, Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
 // Author: Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
 //
+#include <omp.h>
 #if HVS_DEBUG>2
 #include <stdio.h>
 #endif
@@ -34,14 +35,18 @@ int free_ode_data(hvs_ode_data *data) {
 int update_vorticity_field(hvs_state *state) {
 	int i,j;
 	FLOAT_TYPE sum;
+	#pragma omp parallel for private(i)
 	for (i=0; i<state->size; i++) {
 		sum = 0.0;
+		#pragma omp barier
+		#pragma omp parallel for reduction(+:sum) private(j)
 		for (j=0; j<state->ncenters; j++) {
 			sum += 	state->moments[j][MOM_INDEX(0,0)]*he(state->grid[i].x-state->centers[j].x,state->grid[i].y-state->centers[j].y,state->lambdasq,0,0)+
 				state->moments[j][MOM_INDEX(1,1)]*he(state->grid[i].x-state->centers[j].x,state->grid[i].y-state->centers[j].y,state->lambdasq,1,1)+
 				state->moments[j][MOM_INDEX(0,2)]*he(state->grid[i].x-state->centers[j].x,state->grid[i].y-state->centers[j].y,state->lambdasq,0,2)+
 				state->moments[j][MOM_INDEX(2,0)]*he(state->grid[i].x-state->centers[j].x,state->grid[i].y-state->centers[j].y,state->lambdasq,2,0);
 		}
+		#pragma omp barier
 		state->vorticity_field[i] = sum;
 	}
 	return HVS_OK;
@@ -62,6 +67,7 @@ int init_moments(hvs_state *state) {
 		return HVS_ERR;
 	}
 	memset(x,0,sizeof(FLOAT_TYPE)*state->size);
+	#pragma omp parallel for private(i)
 	for(i=0;i<state->size;i++)
 		for(j=0;j<state->size;j++)
 				A[state->size*i+j] = 
@@ -90,6 +96,7 @@ int eval_eq(hvs_ode_data *input, hvs_ode_data *output, hvs_coefs *coefs, FLOAT_T
 	output->lambdasq = input->lambdasq;
 
 	// First evaluate centers equation
+	#pragma omp parallel for private(i0)
 	for (i0=0; i0<input->ncenters; i0++) {
 		output->centers[i0].x=(FLOAT_TYPE)0.0;
 		output->centers[i0].y=(FLOAT_TYPE)0.0;
@@ -128,6 +135,7 @@ int eval_eq(hvs_ode_data *input, hvs_ode_data *output, hvs_coefs *coefs, FLOAT_T
 	}
 	
 	// Now get the moments equations
+	#pragma omp parallel for private(i0)
 	for (i0=0; i0<input->ncenters; i0++) {
 		for(j0=0; j0<input->ncenters; j0++)
 			for(k=0;k<NCOMBS;k++) {
@@ -202,17 +210,24 @@ int rk4_hvs_solve(hvs_state *curdata, FLOAT_TYPE tn, FLOAT_TYPE timestep, FLOAT_
 	memcpy(kt.centers,curdata->centers,sizeof(hvs_center)*curdata->ncenters);
 
 	// Initialize k1,k2,k3,k4 - rk4 function evaluations
-	if ((status=init_ode_data(&k1,curdata))!=HVS_OK) {
-		return status;
-	}
-	if ((status=init_ode_data(&k2,curdata))!=HVS_OK) {
-		return status;
-	}
-	if ((status=init_ode_data(&k3,curdata))!=HVS_OK) {
-		return status;
-	}
-	if ((status=init_ode_data(&k4,curdata))!=HVS_OK) {
-		return status;
+	#pragma omp parallel sections
+	{
+		#pragma omp section
+		if ((status=init_ode_data(&k1,curdata))!=HVS_OK) {
+			return status;
+		}
+		#pragma omp section
+		if ((status=init_ode_data(&k2,curdata))!=HVS_OK) {
+			return status;
+		}
+		#pragma omp section
+		if ((status=init_ode_data(&k3,curdata))!=HVS_OK) {
+			return status;
+		}
+		#pragma omp section
+		if ((status=init_ode_data(&k4,curdata))!=HVS_OK) {
+			return status;
+		}
 	}
 	
 	// Get k1
