@@ -46,7 +46,6 @@ int update_vorticity_field(hvs_state *state) {
 
 	for (i=0; i<state->size; i++) {
 		sum = 0.0;
-		#pragma omp barier
 		#pragma omp parallel for reduction(+:sum) private(j) shared(state)
 		for (j=0; j<state->ncenters; j++) {
 			sum += 	state->moments[j][MOM_INDEX(0,0)]*he(state->grid[i].x-state->centers[j].x,state->grid[i].y-state->centers[j].y,state->lambdasq,0,0)+
@@ -54,7 +53,6 @@ int update_vorticity_field(hvs_state *state) {
 				state->moments[j][MOM_INDEX(0,2)]*he(state->grid[i].x-state->centers[j].x,state->grid[i].y-state->centers[j].y,state->lambdasq,0,2)+
 				state->moments[j][MOM_INDEX(2,0)]*he(state->grid[i].x-state->centers[j].x,state->grid[i].y-state->centers[j].y,state->lambdasq,2,0);
 		}
-		#pragma omp barier
 		state->vorticity_field[i] = sum;
 	}
 	return HVS_OK;
@@ -64,6 +62,11 @@ int init_moments(hvs_state *state) {
 	FLOAT_TYPE *A,*x;
 	UINT i,j,k;
 	int status;
+
+#if HVS_DEBUG
+	printf("init_moments\n");
+#endif
+
 	if (state->size!=state->ncenters) {
 		return HVS_ERR;
 	}
@@ -75,7 +78,7 @@ int init_moments(hvs_state *state) {
 		return HVS_ERR;
 	}
 	memset(x,0,sizeof(FLOAT_TYPE)*state->size);
-	#pragma omp parallel for collapse(2) private(i,j) shared(A)
+	#pragma omp parallel for collapse(2) private(i,j) shared(A,state)
 	for(i=0;i<state->size;i++)
 		for(j=0;j<state->size;j++)
 				A[state->size*i+j] = 
@@ -83,7 +86,7 @@ int init_moments(hvs_state *state) {
 					   state->grid[i].y-state->centers[j].y,
 					   state->lambdasq,
 					   0,0);
-	if ((status=gmres(A,x,state->vorticity_field,state->size,HVS_GMRES_PRECISION,HVS_GMRES_ITERATIONS,x))!=HVS_OK) {
+	if ((status=gmres(A,x,state->vorticity_field,state->size,HVS_GMRES_PRECISION,HVS_GMRES_MAX_INNER_MATRIX,x))!=HVS_OK) {
 		free(A);
 		free(x);
 		return status;

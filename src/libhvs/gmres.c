@@ -1,6 +1,7 @@
 #include "gmres.h"
 #include "vectorutil.h"
 #include "hevosol.h"
+#include "errorutil.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -11,7 +12,7 @@ int gmres(const FLOAT_TYPE *A, const FLOAT_TYPE *x0, const FLOAT_TYPE *b, UINT s
 	FLOAT_TYPE *betae = NULL,*yn = NULL,*bnorm = NULL, *tmp = NULL;
 	FLOAT_TYPE *H = NULL,*Q = NULL;
 	
-	int status;
+	int status,rstatus=HVS_OK;
 	UINT n,i,j,globaln=0;
 	
 #if HVS_DEBUG>2
@@ -48,6 +49,7 @@ int gmres(const FLOAT_TYPE *A, const FLOAT_TYPE *x0, const FLOAT_TYPE *b, UINT s
 	bnormval = M_SQRT(vect_normsq(b,size));
 	beta=(FLOAT_TYPE)0.0;
 	if ((status=vect_scalarmult((FLOAT_TYPE)1/bnormval,b,size,bnorm))!=HVS_OK) {
+		free(bnorm);
 		return status;
 	}
 	
@@ -58,6 +60,7 @@ int gmres(const FLOAT_TYPE *A, const FLOAT_TYPE *x0, const FLOAT_TYPE *b, UINT s
 	while((residualsq>(accuracy*accuracy)) && (globaln<MAX_GMRES_RESTARTS)) {
 		globaln++;
 		if((status = vect_matrixmultsub(A,result,bnorm,size,tmp))!=HVS_OK) {
+			free(bnorm);
 			return status;
 		}
 		if(M_ABS(beta-M_SQRT(vect_normsq(tmp,size)))<HVS_EPS) {
@@ -133,6 +136,9 @@ int gmres(const FLOAT_TYPE *A, const FLOAT_TYPE *x0, const FLOAT_TYPE *b, UINT s
 			for (j=0;j<n;j++) {
 				result[i]+=bnormval*Q[j*size+i]*yn[j];
 			}
+			if (isnan(result[i])) {
+				rstatus = HVS_ERR_GOT_NAN;
+			}
 		}
 	}
 	free(H);
@@ -141,7 +147,16 @@ int gmres(const FLOAT_TYPE *A, const FLOAT_TYPE *x0, const FLOAT_TYPE *b, UINT s
 	free(betae);
 	free(tmp);
 	free(bnorm);
-	return HVS_OK;
+
+#if HVS_DEBUG
+	printf("Global N:%d\nN:%d\n",globaln,n);
+#endif
+
+	if (globaln==MAX_GMRES_RESTARTS) {
+		rstatus = HVS_ERR_GMRES_MAX_RESTART;
+	}
+
+	return rstatus;
 }
 
 int ols(const FLOAT_TYPE *X, const FLOAT_TYPE *y, UINT m, UINT n, FLOAT_TYPE *result) {

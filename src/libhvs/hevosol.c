@@ -276,7 +276,14 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 		free(state);
 		return HVS_ERR_WRONG_SIZE;
 	}
-	init_moments(state);
+	if ((status = init_moments(state))!=HVS_OK) {
+		free(state->centers);
+		free(state->moments);
+		free(state->vorticity_field);
+		free(state->grid);
+		free(state);
+		return status;
+	}
 
 	// Initialize velocity field
 	state->velocity_field = (hvs_vector *) malloc(cursize*sizeof(hvs_vector));
