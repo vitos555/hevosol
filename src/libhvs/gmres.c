@@ -137,7 +137,7 @@ int gmres(const FLOAT_TYPE *A, const FLOAT_TYPE *x0, const FLOAT_TYPE *b, UINT s
 				result[i]+=bnormval*Q[j*size+i]*yn[j];
 			}
 			if (isnan(result[i])) {
-				rstatus = HVS_ERR_GOT_NAN;
+				rstatus = HVS_ERR_GMRES_GOT_NAN;
 			}
 		}
 	}

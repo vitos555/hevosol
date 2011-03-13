@@ -48,7 +48,7 @@
 	(i)*NMOMENTS_1+(j))
 #define MOM_INDEX(i,j) (((i)+(j))*((i)+(j)+1)/2+(j))
 
-#define HVS_GMRES_PRECISION (FLOAT_TYPE)1.0e-7
+#define HVS_GMRES_PRECISION (FLOAT_TYPE)1.0e-6
 #define HVS_GMRES_MAX_INNER_MATRIX 150
 
 //#define HVS_DEBUG 1

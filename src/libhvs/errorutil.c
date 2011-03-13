@@ -16,8 +16,8 @@ void hvserror(int status, const char *string) {
 		case HVS_ERR_WRONG_SIZE:
 			fprintf(stderr, "%s: Given data is not rectangular.\n", string);
 			break;
-		case HVS_ERR_GOT_NAN:
-			fprintf(stderr, "%s: Got NaN.\n", string);
+		case HVS_ERR_GMRES_GOT_NAN:
+			fprintf(stderr, "%s: Got NaN. Try decreasing lambda.\n", string);
 			break;
 		case HVS_ERR_GMRES_MAX_RESTART:
 			fprintf(stderr, "%s: GMRES: Got max restarts. Try decreasing lambda.\n", string);
