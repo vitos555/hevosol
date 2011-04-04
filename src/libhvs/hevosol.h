@@ -7,7 +7,10 @@
 #define HEVOSOL_H 1
 
 // Number of moments to include
+#ifndef NMOMENTS
 #define NMOMENTS 2
+#endif
+
 #define NMOMENTS_1 (NMOMENTS+1)
 #define NMOMENTS_2 (NMOMENTS_1*NMOMENTS_1)
 #define NMOMENTS_3 (NMOMENTS_2*NMOMENTS_1)
@@ -31,8 +34,8 @@
 // 7 -> (2,1)
 // 8 -> (1,2)
 // 9 -> (0,3)
-#define COMBS_IND1(i) (i)==0?0:(i)==1?1:(i)==2?0:(i)==3?2:(i)==4?1:(i)==5?0:(i)==6?3:(i)==7?2:(i)==8?1:(i)==9?0:0
-#define COMBS_IND2(i) (i)==0?0:(i)==1?0:(i)==2?1:(i)==3?0:(i)==4?1:(i)==5?2:(i)==6?0:(i)==7?1:(i)==8?2:(i)==9?3:0
+#define COMBS_IND1(i) (i)==0?0:(i)==1?1:(i)==2?0:(i)==3?2:(i)==4?1:(i)==5?0:(i)==6?3:(i)==7?2:(i)==8?1:(i)==9?0:(i)==10?4:(i)==11?3:(i)==12?2:(i)==13?1:(i)==14?0:0
+#define COMBS_IND2(i) (i)==0?0:(i)==1?0:(i)==2?1:(i)==3?0:(i)==4?1:(i)==5?2:(i)==6?0:(i)==7?1:(i)==8?2:(i)==9?3:(i)==10?0:(i)==11?1:(i)==12?2:(i)==13?3:(i)==14?4:0
 
 #define MOMENTS_LEN NCOMBS
 

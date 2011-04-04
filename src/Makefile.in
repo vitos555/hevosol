@@ -35,7 +35,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = solver$(EXEEXT)
+bin_PROGRAMS = solver0$(EXEEXT) solver2$(EXEEXT) solver3$(EXEEXT) \
+	solver4$(EXEEXT)
 check_PROGRAMS = testsolver$(EXEEXT) testmatrixutil$(EXEEXT) \
 	testgmres$(EXEEXT)
 subdir = src
@@ -74,18 +75,71 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)"
 LTLIBRARIES = $(lib_LTLIBRARIES)
-libhvs_0_1_la_LIBADD =
-am_libhvs_0_1_la_OBJECTS = hevosol.lo fileutil.lo errorutil.lo \
-	hermiteutil.lo factorialutil.lo gmres.lo vectorutil.lo \
-	matrixutil.lo
-libhvs_0_1_la_OBJECTS = $(am_libhvs_0_1_la_OBJECTS)
-libhvs_0_1_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(libhvs_0_1_la_LDFLAGS) $(LDFLAGS) -o $@
+libhvs0_0_1_la_LIBADD =
+am_libhvs0_0_1_la_OBJECTS = libhvs0_0_1_la-hevosol.lo \
+	libhvs0_0_1_la-fileutil.lo libhvs0_0_1_la-errorutil.lo \
+	libhvs0_0_1_la-hermiteutil.lo libhvs0_0_1_la-factorialutil.lo \
+	libhvs0_0_1_la-gmres.lo libhvs0_0_1_la-vectorutil.lo \
+	libhvs0_0_1_la-matrixutil.lo
+libhvs0_0_1_la_OBJECTS = $(am_libhvs0_0_1_la_OBJECTS)
+libhvs0_0_1_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libhvs0_0_1_la_CFLAGS) \
+	$(CFLAGS) $(libhvs0_0_1_la_LDFLAGS) $(LDFLAGS) -o $@
+libhvs2_0_1_la_LIBADD =
+am_libhvs2_0_1_la_OBJECTS = libhvs2_0_1_la-hevosol.lo \
+	libhvs2_0_1_la-fileutil.lo libhvs2_0_1_la-errorutil.lo \
+	libhvs2_0_1_la-hermiteutil.lo libhvs2_0_1_la-factorialutil.lo \
+	libhvs2_0_1_la-gmres.lo libhvs2_0_1_la-vectorutil.lo \
+	libhvs2_0_1_la-matrixutil.lo
+libhvs2_0_1_la_OBJECTS = $(am_libhvs2_0_1_la_OBJECTS)
+libhvs2_0_1_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libhvs2_0_1_la_CFLAGS) \
+	$(CFLAGS) $(libhvs2_0_1_la_LDFLAGS) $(LDFLAGS) -o $@
+libhvs3_0_1_la_LIBADD =
+am_libhvs3_0_1_la_OBJECTS = libhvs3_0_1_la-hevosol.lo \
+	libhvs3_0_1_la-fileutil.lo libhvs3_0_1_la-errorutil.lo \
+	libhvs3_0_1_la-hermiteutil.lo libhvs3_0_1_la-factorialutil.lo \
+	libhvs3_0_1_la-gmres.lo libhvs3_0_1_la-vectorutil.lo \
+	libhvs3_0_1_la-matrixutil.lo
+libhvs3_0_1_la_OBJECTS = $(am_libhvs3_0_1_la_OBJECTS)
+libhvs3_0_1_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libhvs3_0_1_la_CFLAGS) \
+	$(CFLAGS) $(libhvs3_0_1_la_LDFLAGS) $(LDFLAGS) -o $@
+libhvs4_0_1_la_LIBADD =
+am_libhvs4_0_1_la_OBJECTS = libhvs4_0_1_la-hevosol.lo \
+	libhvs4_0_1_la-fileutil.lo libhvs4_0_1_la-errorutil.lo \
+	libhvs4_0_1_la-hermiteutil.lo libhvs4_0_1_la-factorialutil.lo \
+	libhvs4_0_1_la-gmres.lo libhvs4_0_1_la-vectorutil.lo \
+	libhvs4_0_1_la-matrixutil.lo
+libhvs4_0_1_la_OBJECTS = $(am_libhvs4_0_1_la_OBJECTS)
+libhvs4_0_1_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libhvs4_0_1_la_CFLAGS) \
+	$(CFLAGS) $(libhvs4_0_1_la_LDFLAGS) $(LDFLAGS) -o $@
 PROGRAMS = $(bin_PROGRAMS)
-am_solver_OBJECTS = main.$(OBJEXT)
-solver_OBJECTS = $(am_solver_OBJECTS)
-solver_DEPENDENCIES = libhvs-0.1.la
+am_solver0_OBJECTS = solver0-main.$(OBJEXT)
+solver0_OBJECTS = $(am_solver0_OBJECTS)
+solver0_DEPENDENCIES = libhvs0-0.1.la
+solver0_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(solver0_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
+am_solver2_OBJECTS = solver2-main.$(OBJEXT)
+solver2_OBJECTS = $(am_solver2_OBJECTS)
+solver2_DEPENDENCIES = libhvs2-0.1.la
+solver2_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(solver2_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
+am_solver3_OBJECTS = solver3-main.$(OBJEXT)
+solver3_OBJECTS = $(am_solver3_OBJECTS)
+solver3_DEPENDENCIES = libhvs3-0.1.la
+solver3_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(solver3_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
+am_solver4_OBJECTS = solver4-main.$(OBJEXT)
+solver4_OBJECTS = $(am_solver4_OBJECTS)
+solver4_DEPENDENCIES = libhvs4-0.1.la
+solver4_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(solver4_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 am_testgmres_OBJECTS = test_gmres.$(OBJEXT)
 testgmres_OBJECTS = $(am_testgmres_OBJECTS)
 testgmres_DEPENDENCIES = libhvs-0.1.la
@@ -108,12 +162,16 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = $(libhvs_0_1_la_SOURCES) $(solver_SOURCES) \
-	$(testgmres_SOURCES) $(testmatrixutil_SOURCES) \
-	$(testsolver_SOURCES)
-DIST_SOURCES = $(libhvs_0_1_la_SOURCES) $(solver_SOURCES) \
-	$(testgmres_SOURCES) $(testmatrixutil_SOURCES) \
-	$(testsolver_SOURCES)
+SOURCES = $(libhvs0_0_1_la_SOURCES) $(libhvs2_0_1_la_SOURCES) \
+	$(libhvs3_0_1_la_SOURCES) $(libhvs4_0_1_la_SOURCES) \
+	$(solver0_SOURCES) $(solver2_SOURCES) $(solver3_SOURCES) \
+	$(solver4_SOURCES) $(testgmres_SOURCES) \
+	$(testmatrixutil_SOURCES) $(testsolver_SOURCES)
+DIST_SOURCES = $(libhvs0_0_1_la_SOURCES) $(libhvs2_0_1_la_SOURCES) \
+	$(libhvs3_0_1_la_SOURCES) $(libhvs4_0_1_la_SOURCES) \
+	$(solver0_SOURCES) $(solver2_SOURCES) $(solver3_SOURCES) \
+	$(solver4_SOURCES) $(testgmres_SOURCES) \
+	$(testmatrixutil_SOURCES) $(testsolver_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -231,17 +289,37 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-solver_SOURCES = main.c
-solver_LDADD = libhvs-0.1.la
+solver0_SOURCES = main.c
+solver0_LDADD = libhvs0-0.1.la
+solver0_CFLAGS = -DNMOMENTS=0
+solver2_SOURCES = main.c
+solver2_LDADD = libhvs2-0.1.la
+solver2_CFLAGS = -DNMOMENTS=3
+solver3_SOURCES = main.c
+solver3_LDADD = libhvs3-0.1.la
+solver3_CFLAGS = -DNMOMENTS=3
+solver4_SOURCES = main.c
+solver4_LDADD = libhvs4-0.1.la
+solver4_CFLAGS = -DNMOMENTS=4
 testsolver_SOURCES = test/test_solver.c
 testsolver_LDADD = libhvs-0.1.la
 testmatrixutil_SOURCES = test/test_matrixutil.c
 testmatrixutil_LDADD = libhvs-0.1.la
 testgmres_SOURCES = test/test_gmres.c
 testgmres_LDADD = libhvs-0.1.la
-lib_LTLIBRARIES = libhvs-0.1.la
-libhvs_0_1_la_SOURCES = libhvs/hevosol.c libhvs/fileutil.c libhvs/errorutil.c libhvs/hermiteutil.c libhvs/factorialutil.c libhvs/gmres.c libhvs/vectorutil.c libhvs/matrixutil.c
-libhvs_0_1_la_LDFLAGS = -version-info 1:0:1 -fopenmp
+lib_LTLIBRARIES = libhvs0-0.1.la libhvs2-0.1.la libhvs3-0.1.la libhvs4-0.1.la 
+libhvs0_0_1_la_SOURCES = libhvs/hevosol.c libhvs/fileutil.c libhvs/errorutil.c libhvs/hermiteutil.c libhvs/factorialutil.c libhvs/gmres.c libhvs/vectorutil.c libhvs/matrixutil.c
+libhvs0_0_1_la_LDFLAGS = -version-info 1:0:1 -fopenmp
+libhvs0_0_1_la_CFLAGS = -DNMOMENTS=0
+libhvs2_0_1_la_SOURCES = libhvs/hevosol.c libhvs/fileutil.c libhvs/errorutil.c libhvs/hermiteutil.c libhvs/factorialutil.c libhvs/gmres.c libhvs/vectorutil.c libhvs/matrixutil.c
+libhvs2_0_1_la_LDFLAGS = -version-info 1:0:1 -fopenmp
+libhvs2_0_1_la_CFLAGS = -DNMOMENTS=2
+libhvs3_0_1_la_SOURCES = libhvs/hevosol.c libhvs/fileutil.c libhvs/errorutil.c libhvs/hermiteutil.c libhvs/factorialutil.c libhvs/gmres.c libhvs/vectorutil.c libhvs/matrixutil.c
+libhvs3_0_1_la_LDFLAGS = -version-info 1:0:1 -fopenmp
+libhvs3_0_1_la_CFLAGS = -DNMOMENTS=3
+libhvs4_0_1_la_SOURCES = libhvs/hevosol.c libhvs/fileutil.c libhvs/errorutil.c libhvs/hermiteutil.c libhvs/factorialutil.c libhvs/gmres.c libhvs/vectorutil.c libhvs/matrixutil.c
+libhvs4_0_1_la_LDFLAGS = -version-info 1:0:1 -fopenmp
+libhvs4_0_1_la_CFLAGS = -DNMOMENTS=4
 all: all-am
 
 .SUFFIXES:
@@ -307,8 +385,14 @@ clean-libLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libhvs-0.1.la: $(libhvs_0_1_la_OBJECTS) $(libhvs_0_1_la_DEPENDENCIES) 
-	$(libhvs_0_1_la_LINK) -rpath $(libdir) $(libhvs_0_1_la_OBJECTS) $(libhvs_0_1_la_LIBADD) $(LIBS)
+libhvs0-0.1.la: $(libhvs0_0_1_la_OBJECTS) $(libhvs0_0_1_la_DEPENDENCIES) 
+	$(libhvs0_0_1_la_LINK) -rpath $(libdir) $(libhvs0_0_1_la_OBJECTS) $(libhvs0_0_1_la_LIBADD) $(LIBS)
+libhvs2-0.1.la: $(libhvs2_0_1_la_OBJECTS) $(libhvs2_0_1_la_DEPENDENCIES) 
+	$(libhvs2_0_1_la_LINK) -rpath $(libdir) $(libhvs2_0_1_la_OBJECTS) $(libhvs2_0_1_la_LIBADD) $(LIBS)
+libhvs3-0.1.la: $(libhvs3_0_1_la_OBJECTS) $(libhvs3_0_1_la_DEPENDENCIES) 
+	$(libhvs3_0_1_la_LINK) -rpath $(libdir) $(libhvs3_0_1_la_OBJECTS) $(libhvs3_0_1_la_LIBADD) $(LIBS)
+libhvs4-0.1.la: $(libhvs4_0_1_la_OBJECTS) $(libhvs4_0_1_la_DEPENDENCIES) 
+	$(libhvs4_0_1_la_LINK) -rpath $(libdir) $(libhvs4_0_1_la_OBJECTS) $(libhvs4_0_1_la_LIBADD) $(LIBS)
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
@@ -361,9 +445,18 @@ clean-checkPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
-solver$(EXEEXT): $(solver_OBJECTS) $(solver_DEPENDENCIES) 
-	@rm -f solver$(EXEEXT)
-	$(LINK) $(solver_OBJECTS) $(solver_LDADD) $(LIBS)
+solver0$(EXEEXT): $(solver0_OBJECTS) $(solver0_DEPENDENCIES) 
+	@rm -f solver0$(EXEEXT)
+	$(solver0_LINK) $(solver0_OBJECTS) $(solver0_LDADD) $(LIBS)
+solver2$(EXEEXT): $(solver2_OBJECTS) $(solver2_DEPENDENCIES) 
+	@rm -f solver2$(EXEEXT)
+	$(solver2_LINK) $(solver2_OBJECTS) $(solver2_LDADD) $(LIBS)
+solver3$(EXEEXT): $(solver3_OBJECTS) $(solver3_DEPENDENCIES) 
+	@rm -f solver3$(EXEEXT)
+	$(solver3_LINK) $(solver3_OBJECTS) $(solver3_LDADD) $(LIBS)
+solver4$(EXEEXT): $(solver4_OBJECTS) $(solver4_DEPENDENCIES) 
+	@rm -f solver4$(EXEEXT)
+	$(solver4_LINK) $(solver4_OBJECTS) $(solver4_LDADD) $(LIBS)
 testgmres$(EXEEXT): $(testgmres_OBJECTS) $(testgmres_DEPENDENCIES) 
 	@rm -f testgmres$(EXEEXT)
 	$(LINK) $(testgmres_OBJECTS) $(testgmres_LDADD) $(LIBS)
@@ -380,18 +473,45 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/errorutil.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/factorialutil.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fileutil.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gmres.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hermiteutil.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hevosol.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/matrixutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs0_0_1_la-errorutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs0_0_1_la-factorialutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs0_0_1_la-fileutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs0_0_1_la-gmres.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs0_0_1_la-hermiteutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs0_0_1_la-hevosol.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs0_0_1_la-matrixutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs0_0_1_la-vectorutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs2_0_1_la-errorutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs2_0_1_la-factorialutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs2_0_1_la-fileutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs2_0_1_la-gmres.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs2_0_1_la-hermiteutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs2_0_1_la-hevosol.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs2_0_1_la-matrixutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs2_0_1_la-vectorutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs3_0_1_la-errorutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs3_0_1_la-factorialutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs3_0_1_la-fileutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs3_0_1_la-gmres.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs3_0_1_la-hermiteutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs3_0_1_la-hevosol.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs3_0_1_la-matrixutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs3_0_1_la-vectorutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs4_0_1_la-errorutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs4_0_1_la-factorialutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs4_0_1_la-fileutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs4_0_1_la-gmres.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs4_0_1_la-hermiteutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs4_0_1_la-hevosol.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs4_0_1_la-matrixutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libhvs4_0_1_la-vectorutil.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver0-main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver2-main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver3-main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver4-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_gmres.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_matrixutil.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_solver.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vectorutil.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -414,61 +534,285 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-hevosol.lo: libhvs/hevosol.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hevosol.lo -MD -MP -MF $(DEPDIR)/hevosol.Tpo -c -o hevosol.lo `test -f 'libhvs/hevosol.c' || echo '$(srcdir)/'`libhvs/hevosol.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/hevosol.Tpo $(DEPDIR)/hevosol.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/hevosol.c' object='hevosol.lo' libtool=yes @AMDEPBACKSLASH@
+libhvs0_0_1_la-hevosol.lo: libhvs/hevosol.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs0_0_1_la-hevosol.lo -MD -MP -MF $(DEPDIR)/libhvs0_0_1_la-hevosol.Tpo -c -o libhvs0_0_1_la-hevosol.lo `test -f 'libhvs/hevosol.c' || echo '$(srcdir)/'`libhvs/hevosol.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs0_0_1_la-hevosol.Tpo $(DEPDIR)/libhvs0_0_1_la-hevosol.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/hevosol.c' object='libhvs0_0_1_la-hevosol.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hevosol.lo `test -f 'libhvs/hevosol.c' || echo '$(srcdir)/'`libhvs/hevosol.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs0_0_1_la-hevosol.lo `test -f 'libhvs/hevosol.c' || echo '$(srcdir)/'`libhvs/hevosol.c
 
-fileutil.lo: libhvs/fileutil.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT fileutil.lo -MD -MP -MF $(DEPDIR)/fileutil.Tpo -c -o fileutil.lo `test -f 'libhvs/fileutil.c' || echo '$(srcdir)/'`libhvs/fileutil.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/fileutil.Tpo $(DEPDIR)/fileutil.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/fileutil.c' object='fileutil.lo' libtool=yes @AMDEPBACKSLASH@
+libhvs0_0_1_la-fileutil.lo: libhvs/fileutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs0_0_1_la-fileutil.lo -MD -MP -MF $(DEPDIR)/libhvs0_0_1_la-fileutil.Tpo -c -o libhvs0_0_1_la-fileutil.lo `test -f 'libhvs/fileutil.c' || echo '$(srcdir)/'`libhvs/fileutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs0_0_1_la-fileutil.Tpo $(DEPDIR)/libhvs0_0_1_la-fileutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/fileutil.c' object='libhvs0_0_1_la-fileutil.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o fileutil.lo `test -f 'libhvs/fileutil.c' || echo '$(srcdir)/'`libhvs/fileutil.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs0_0_1_la-fileutil.lo `test -f 'libhvs/fileutil.c' || echo '$(srcdir)/'`libhvs/fileutil.c
 
-errorutil.lo: libhvs/errorutil.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT errorutil.lo -MD -MP -MF $(DEPDIR)/errorutil.Tpo -c -o errorutil.lo `test -f 'libhvs/errorutil.c' || echo '$(srcdir)/'`libhvs/errorutil.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/errorutil.Tpo $(DEPDIR)/errorutil.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/errorutil.c' object='errorutil.lo' libtool=yes @AMDEPBACKSLASH@
+libhvs0_0_1_la-errorutil.lo: libhvs/errorutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs0_0_1_la-errorutil.lo -MD -MP -MF $(DEPDIR)/libhvs0_0_1_la-errorutil.Tpo -c -o libhvs0_0_1_la-errorutil.lo `test -f 'libhvs/errorutil.c' || echo '$(srcdir)/'`libhvs/errorutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs0_0_1_la-errorutil.Tpo $(DEPDIR)/libhvs0_0_1_la-errorutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/errorutil.c' object='libhvs0_0_1_la-errorutil.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o errorutil.lo `test -f 'libhvs/errorutil.c' || echo '$(srcdir)/'`libhvs/errorutil.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs0_0_1_la-errorutil.lo `test -f 'libhvs/errorutil.c' || echo '$(srcdir)/'`libhvs/errorutil.c
 
-hermiteutil.lo: libhvs/hermiteutil.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hermiteutil.lo -MD -MP -MF $(DEPDIR)/hermiteutil.Tpo -c -o hermiteutil.lo `test -f 'libhvs/hermiteutil.c' || echo '$(srcdir)/'`libhvs/hermiteutil.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/hermiteutil.Tpo $(DEPDIR)/hermiteutil.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/hermiteutil.c' object='hermiteutil.lo' libtool=yes @AMDEPBACKSLASH@
+libhvs0_0_1_la-hermiteutil.lo: libhvs/hermiteutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs0_0_1_la-hermiteutil.lo -MD -MP -MF $(DEPDIR)/libhvs0_0_1_la-hermiteutil.Tpo -c -o libhvs0_0_1_la-hermiteutil.lo `test -f 'libhvs/hermiteutil.c' || echo '$(srcdir)/'`libhvs/hermiteutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs0_0_1_la-hermiteutil.Tpo $(DEPDIR)/libhvs0_0_1_la-hermiteutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/hermiteutil.c' object='libhvs0_0_1_la-hermiteutil.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hermiteutil.lo `test -f 'libhvs/hermiteutil.c' || echo '$(srcdir)/'`libhvs/hermiteutil.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs0_0_1_la-hermiteutil.lo `test -f 'libhvs/hermiteutil.c' || echo '$(srcdir)/'`libhvs/hermiteutil.c
 
-factorialutil.lo: libhvs/factorialutil.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT factorialutil.lo -MD -MP -MF $(DEPDIR)/factorialutil.Tpo -c -o factorialutil.lo `test -f 'libhvs/factorialutil.c' || echo '$(srcdir)/'`libhvs/factorialutil.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/factorialutil.Tpo $(DEPDIR)/factorialutil.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/factorialutil.c' object='factorialutil.lo' libtool=yes @AMDEPBACKSLASH@
+libhvs0_0_1_la-factorialutil.lo: libhvs/factorialutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs0_0_1_la-factorialutil.lo -MD -MP -MF $(DEPDIR)/libhvs0_0_1_la-factorialutil.Tpo -c -o libhvs0_0_1_la-factorialutil.lo `test -f 'libhvs/factorialutil.c' || echo '$(srcdir)/'`libhvs/factorialutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs0_0_1_la-factorialutil.Tpo $(DEPDIR)/libhvs0_0_1_la-factorialutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/factorialutil.c' object='libhvs0_0_1_la-factorialutil.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o factorialutil.lo `test -f 'libhvs/factorialutil.c' || echo '$(srcdir)/'`libhvs/factorialutil.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs0_0_1_la-factorialutil.lo `test -f 'libhvs/factorialutil.c' || echo '$(srcdir)/'`libhvs/factorialutil.c
 
-gmres.lo: libhvs/gmres.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT gmres.lo -MD -MP -MF $(DEPDIR)/gmres.Tpo -c -o gmres.lo `test -f 'libhvs/gmres.c' || echo '$(srcdir)/'`libhvs/gmres.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/gmres.Tpo $(DEPDIR)/gmres.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/gmres.c' object='gmres.lo' libtool=yes @AMDEPBACKSLASH@
+libhvs0_0_1_la-gmres.lo: libhvs/gmres.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs0_0_1_la-gmres.lo -MD -MP -MF $(DEPDIR)/libhvs0_0_1_la-gmres.Tpo -c -o libhvs0_0_1_la-gmres.lo `test -f 'libhvs/gmres.c' || echo '$(srcdir)/'`libhvs/gmres.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs0_0_1_la-gmres.Tpo $(DEPDIR)/libhvs0_0_1_la-gmres.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/gmres.c' object='libhvs0_0_1_la-gmres.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o gmres.lo `test -f 'libhvs/gmres.c' || echo '$(srcdir)/'`libhvs/gmres.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs0_0_1_la-gmres.lo `test -f 'libhvs/gmres.c' || echo '$(srcdir)/'`libhvs/gmres.c
 
-vectorutil.lo: libhvs/vectorutil.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT vectorutil.lo -MD -MP -MF $(DEPDIR)/vectorutil.Tpo -c -o vectorutil.lo `test -f 'libhvs/vectorutil.c' || echo '$(srcdir)/'`libhvs/vectorutil.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/vectorutil.Tpo $(DEPDIR)/vectorutil.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/vectorutil.c' object='vectorutil.lo' libtool=yes @AMDEPBACKSLASH@
+libhvs0_0_1_la-vectorutil.lo: libhvs/vectorutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs0_0_1_la-vectorutil.lo -MD -MP -MF $(DEPDIR)/libhvs0_0_1_la-vectorutil.Tpo -c -o libhvs0_0_1_la-vectorutil.lo `test -f 'libhvs/vectorutil.c' || echo '$(srcdir)/'`libhvs/vectorutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs0_0_1_la-vectorutil.Tpo $(DEPDIR)/libhvs0_0_1_la-vectorutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/vectorutil.c' object='libhvs0_0_1_la-vectorutil.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o vectorutil.lo `test -f 'libhvs/vectorutil.c' || echo '$(srcdir)/'`libhvs/vectorutil.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs0_0_1_la-vectorutil.lo `test -f 'libhvs/vectorutil.c' || echo '$(srcdir)/'`libhvs/vectorutil.c
 
-matrixutil.lo: libhvs/matrixutil.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT matrixutil.lo -MD -MP -MF $(DEPDIR)/matrixutil.Tpo -c -o matrixutil.lo `test -f 'libhvs/matrixutil.c' || echo '$(srcdir)/'`libhvs/matrixutil.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/matrixutil.Tpo $(DEPDIR)/matrixutil.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/matrixutil.c' object='matrixutil.lo' libtool=yes @AMDEPBACKSLASH@
+libhvs0_0_1_la-matrixutil.lo: libhvs/matrixutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs0_0_1_la-matrixutil.lo -MD -MP -MF $(DEPDIR)/libhvs0_0_1_la-matrixutil.Tpo -c -o libhvs0_0_1_la-matrixutil.lo `test -f 'libhvs/matrixutil.c' || echo '$(srcdir)/'`libhvs/matrixutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs0_0_1_la-matrixutil.Tpo $(DEPDIR)/libhvs0_0_1_la-matrixutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/matrixutil.c' object='libhvs0_0_1_la-matrixutil.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o matrixutil.lo `test -f 'libhvs/matrixutil.c' || echo '$(srcdir)/'`libhvs/matrixutil.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs0_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs0_0_1_la-matrixutil.lo `test -f 'libhvs/matrixutil.c' || echo '$(srcdir)/'`libhvs/matrixutil.c
+
+libhvs2_0_1_la-hevosol.lo: libhvs/hevosol.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs2_0_1_la-hevosol.lo -MD -MP -MF $(DEPDIR)/libhvs2_0_1_la-hevosol.Tpo -c -o libhvs2_0_1_la-hevosol.lo `test -f 'libhvs/hevosol.c' || echo '$(srcdir)/'`libhvs/hevosol.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs2_0_1_la-hevosol.Tpo $(DEPDIR)/libhvs2_0_1_la-hevosol.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/hevosol.c' object='libhvs2_0_1_la-hevosol.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs2_0_1_la-hevosol.lo `test -f 'libhvs/hevosol.c' || echo '$(srcdir)/'`libhvs/hevosol.c
+
+libhvs2_0_1_la-fileutil.lo: libhvs/fileutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs2_0_1_la-fileutil.lo -MD -MP -MF $(DEPDIR)/libhvs2_0_1_la-fileutil.Tpo -c -o libhvs2_0_1_la-fileutil.lo `test -f 'libhvs/fileutil.c' || echo '$(srcdir)/'`libhvs/fileutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs2_0_1_la-fileutil.Tpo $(DEPDIR)/libhvs2_0_1_la-fileutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/fileutil.c' object='libhvs2_0_1_la-fileutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs2_0_1_la-fileutil.lo `test -f 'libhvs/fileutil.c' || echo '$(srcdir)/'`libhvs/fileutil.c
+
+libhvs2_0_1_la-errorutil.lo: libhvs/errorutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs2_0_1_la-errorutil.lo -MD -MP -MF $(DEPDIR)/libhvs2_0_1_la-errorutil.Tpo -c -o libhvs2_0_1_la-errorutil.lo `test -f 'libhvs/errorutil.c' || echo '$(srcdir)/'`libhvs/errorutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs2_0_1_la-errorutil.Tpo $(DEPDIR)/libhvs2_0_1_la-errorutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/errorutil.c' object='libhvs2_0_1_la-errorutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs2_0_1_la-errorutil.lo `test -f 'libhvs/errorutil.c' || echo '$(srcdir)/'`libhvs/errorutil.c
+
+libhvs2_0_1_la-hermiteutil.lo: libhvs/hermiteutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs2_0_1_la-hermiteutil.lo -MD -MP -MF $(DEPDIR)/libhvs2_0_1_la-hermiteutil.Tpo -c -o libhvs2_0_1_la-hermiteutil.lo `test -f 'libhvs/hermiteutil.c' || echo '$(srcdir)/'`libhvs/hermiteutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs2_0_1_la-hermiteutil.Tpo $(DEPDIR)/libhvs2_0_1_la-hermiteutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/hermiteutil.c' object='libhvs2_0_1_la-hermiteutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs2_0_1_la-hermiteutil.lo `test -f 'libhvs/hermiteutil.c' || echo '$(srcdir)/'`libhvs/hermiteutil.c
+
+libhvs2_0_1_la-factorialutil.lo: libhvs/factorialutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs2_0_1_la-factorialutil.lo -MD -MP -MF $(DEPDIR)/libhvs2_0_1_la-factorialutil.Tpo -c -o libhvs2_0_1_la-factorialutil.lo `test -f 'libhvs/factorialutil.c' || echo '$(srcdir)/'`libhvs/factorialutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs2_0_1_la-factorialutil.Tpo $(DEPDIR)/libhvs2_0_1_la-factorialutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/factorialutil.c' object='libhvs2_0_1_la-factorialutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs2_0_1_la-factorialutil.lo `test -f 'libhvs/factorialutil.c' || echo '$(srcdir)/'`libhvs/factorialutil.c
+
+libhvs2_0_1_la-gmres.lo: libhvs/gmres.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs2_0_1_la-gmres.lo -MD -MP -MF $(DEPDIR)/libhvs2_0_1_la-gmres.Tpo -c -o libhvs2_0_1_la-gmres.lo `test -f 'libhvs/gmres.c' || echo '$(srcdir)/'`libhvs/gmres.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs2_0_1_la-gmres.Tpo $(DEPDIR)/libhvs2_0_1_la-gmres.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/gmres.c' object='libhvs2_0_1_la-gmres.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs2_0_1_la-gmres.lo `test -f 'libhvs/gmres.c' || echo '$(srcdir)/'`libhvs/gmres.c
+
+libhvs2_0_1_la-vectorutil.lo: libhvs/vectorutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs2_0_1_la-vectorutil.lo -MD -MP -MF $(DEPDIR)/libhvs2_0_1_la-vectorutil.Tpo -c -o libhvs2_0_1_la-vectorutil.lo `test -f 'libhvs/vectorutil.c' || echo '$(srcdir)/'`libhvs/vectorutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs2_0_1_la-vectorutil.Tpo $(DEPDIR)/libhvs2_0_1_la-vectorutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/vectorutil.c' object='libhvs2_0_1_la-vectorutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs2_0_1_la-vectorutil.lo `test -f 'libhvs/vectorutil.c' || echo '$(srcdir)/'`libhvs/vectorutil.c
+
+libhvs2_0_1_la-matrixutil.lo: libhvs/matrixutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs2_0_1_la-matrixutil.lo -MD -MP -MF $(DEPDIR)/libhvs2_0_1_la-matrixutil.Tpo -c -o libhvs2_0_1_la-matrixutil.lo `test -f 'libhvs/matrixutil.c' || echo '$(srcdir)/'`libhvs/matrixutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs2_0_1_la-matrixutil.Tpo $(DEPDIR)/libhvs2_0_1_la-matrixutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/matrixutil.c' object='libhvs2_0_1_la-matrixutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs2_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs2_0_1_la-matrixutil.lo `test -f 'libhvs/matrixutil.c' || echo '$(srcdir)/'`libhvs/matrixutil.c
+
+libhvs3_0_1_la-hevosol.lo: libhvs/hevosol.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs3_0_1_la-hevosol.lo -MD -MP -MF $(DEPDIR)/libhvs3_0_1_la-hevosol.Tpo -c -o libhvs3_0_1_la-hevosol.lo `test -f 'libhvs/hevosol.c' || echo '$(srcdir)/'`libhvs/hevosol.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs3_0_1_la-hevosol.Tpo $(DEPDIR)/libhvs3_0_1_la-hevosol.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/hevosol.c' object='libhvs3_0_1_la-hevosol.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs3_0_1_la-hevosol.lo `test -f 'libhvs/hevosol.c' || echo '$(srcdir)/'`libhvs/hevosol.c
+
+libhvs3_0_1_la-fileutil.lo: libhvs/fileutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs3_0_1_la-fileutil.lo -MD -MP -MF $(DEPDIR)/libhvs3_0_1_la-fileutil.Tpo -c -o libhvs3_0_1_la-fileutil.lo `test -f 'libhvs/fileutil.c' || echo '$(srcdir)/'`libhvs/fileutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs3_0_1_la-fileutil.Tpo $(DEPDIR)/libhvs3_0_1_la-fileutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/fileutil.c' object='libhvs3_0_1_la-fileutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs3_0_1_la-fileutil.lo `test -f 'libhvs/fileutil.c' || echo '$(srcdir)/'`libhvs/fileutil.c
+
+libhvs3_0_1_la-errorutil.lo: libhvs/errorutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs3_0_1_la-errorutil.lo -MD -MP -MF $(DEPDIR)/libhvs3_0_1_la-errorutil.Tpo -c -o libhvs3_0_1_la-errorutil.lo `test -f 'libhvs/errorutil.c' || echo '$(srcdir)/'`libhvs/errorutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs3_0_1_la-errorutil.Tpo $(DEPDIR)/libhvs3_0_1_la-errorutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/errorutil.c' object='libhvs3_0_1_la-errorutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs3_0_1_la-errorutil.lo `test -f 'libhvs/errorutil.c' || echo '$(srcdir)/'`libhvs/errorutil.c
+
+libhvs3_0_1_la-hermiteutil.lo: libhvs/hermiteutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs3_0_1_la-hermiteutil.lo -MD -MP -MF $(DEPDIR)/libhvs3_0_1_la-hermiteutil.Tpo -c -o libhvs3_0_1_la-hermiteutil.lo `test -f 'libhvs/hermiteutil.c' || echo '$(srcdir)/'`libhvs/hermiteutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs3_0_1_la-hermiteutil.Tpo $(DEPDIR)/libhvs3_0_1_la-hermiteutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/hermiteutil.c' object='libhvs3_0_1_la-hermiteutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs3_0_1_la-hermiteutil.lo `test -f 'libhvs/hermiteutil.c' || echo '$(srcdir)/'`libhvs/hermiteutil.c
+
+libhvs3_0_1_la-factorialutil.lo: libhvs/factorialutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs3_0_1_la-factorialutil.lo -MD -MP -MF $(DEPDIR)/libhvs3_0_1_la-factorialutil.Tpo -c -o libhvs3_0_1_la-factorialutil.lo `test -f 'libhvs/factorialutil.c' || echo '$(srcdir)/'`libhvs/factorialutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs3_0_1_la-factorialutil.Tpo $(DEPDIR)/libhvs3_0_1_la-factorialutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/factorialutil.c' object='libhvs3_0_1_la-factorialutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs3_0_1_la-factorialutil.lo `test -f 'libhvs/factorialutil.c' || echo '$(srcdir)/'`libhvs/factorialutil.c
+
+libhvs3_0_1_la-gmres.lo: libhvs/gmres.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs3_0_1_la-gmres.lo -MD -MP -MF $(DEPDIR)/libhvs3_0_1_la-gmres.Tpo -c -o libhvs3_0_1_la-gmres.lo `test -f 'libhvs/gmres.c' || echo '$(srcdir)/'`libhvs/gmres.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs3_0_1_la-gmres.Tpo $(DEPDIR)/libhvs3_0_1_la-gmres.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/gmres.c' object='libhvs3_0_1_la-gmres.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs3_0_1_la-gmres.lo `test -f 'libhvs/gmres.c' || echo '$(srcdir)/'`libhvs/gmres.c
+
+libhvs3_0_1_la-vectorutil.lo: libhvs/vectorutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs3_0_1_la-vectorutil.lo -MD -MP -MF $(DEPDIR)/libhvs3_0_1_la-vectorutil.Tpo -c -o libhvs3_0_1_la-vectorutil.lo `test -f 'libhvs/vectorutil.c' || echo '$(srcdir)/'`libhvs/vectorutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs3_0_1_la-vectorutil.Tpo $(DEPDIR)/libhvs3_0_1_la-vectorutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/vectorutil.c' object='libhvs3_0_1_la-vectorutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs3_0_1_la-vectorutil.lo `test -f 'libhvs/vectorutil.c' || echo '$(srcdir)/'`libhvs/vectorutil.c
+
+libhvs3_0_1_la-matrixutil.lo: libhvs/matrixutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs3_0_1_la-matrixutil.lo -MD -MP -MF $(DEPDIR)/libhvs3_0_1_la-matrixutil.Tpo -c -o libhvs3_0_1_la-matrixutil.lo `test -f 'libhvs/matrixutil.c' || echo '$(srcdir)/'`libhvs/matrixutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs3_0_1_la-matrixutil.Tpo $(DEPDIR)/libhvs3_0_1_la-matrixutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/matrixutil.c' object='libhvs3_0_1_la-matrixutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs3_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs3_0_1_la-matrixutil.lo `test -f 'libhvs/matrixutil.c' || echo '$(srcdir)/'`libhvs/matrixutil.c
+
+libhvs4_0_1_la-hevosol.lo: libhvs/hevosol.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs4_0_1_la-hevosol.lo -MD -MP -MF $(DEPDIR)/libhvs4_0_1_la-hevosol.Tpo -c -o libhvs4_0_1_la-hevosol.lo `test -f 'libhvs/hevosol.c' || echo '$(srcdir)/'`libhvs/hevosol.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs4_0_1_la-hevosol.Tpo $(DEPDIR)/libhvs4_0_1_la-hevosol.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/hevosol.c' object='libhvs4_0_1_la-hevosol.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs4_0_1_la-hevosol.lo `test -f 'libhvs/hevosol.c' || echo '$(srcdir)/'`libhvs/hevosol.c
+
+libhvs4_0_1_la-fileutil.lo: libhvs/fileutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs4_0_1_la-fileutil.lo -MD -MP -MF $(DEPDIR)/libhvs4_0_1_la-fileutil.Tpo -c -o libhvs4_0_1_la-fileutil.lo `test -f 'libhvs/fileutil.c' || echo '$(srcdir)/'`libhvs/fileutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs4_0_1_la-fileutil.Tpo $(DEPDIR)/libhvs4_0_1_la-fileutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/fileutil.c' object='libhvs4_0_1_la-fileutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs4_0_1_la-fileutil.lo `test -f 'libhvs/fileutil.c' || echo '$(srcdir)/'`libhvs/fileutil.c
+
+libhvs4_0_1_la-errorutil.lo: libhvs/errorutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs4_0_1_la-errorutil.lo -MD -MP -MF $(DEPDIR)/libhvs4_0_1_la-errorutil.Tpo -c -o libhvs4_0_1_la-errorutil.lo `test -f 'libhvs/errorutil.c' || echo '$(srcdir)/'`libhvs/errorutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs4_0_1_la-errorutil.Tpo $(DEPDIR)/libhvs4_0_1_la-errorutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/errorutil.c' object='libhvs4_0_1_la-errorutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs4_0_1_la-errorutil.lo `test -f 'libhvs/errorutil.c' || echo '$(srcdir)/'`libhvs/errorutil.c
+
+libhvs4_0_1_la-hermiteutil.lo: libhvs/hermiteutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs4_0_1_la-hermiteutil.lo -MD -MP -MF $(DEPDIR)/libhvs4_0_1_la-hermiteutil.Tpo -c -o libhvs4_0_1_la-hermiteutil.lo `test -f 'libhvs/hermiteutil.c' || echo '$(srcdir)/'`libhvs/hermiteutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs4_0_1_la-hermiteutil.Tpo $(DEPDIR)/libhvs4_0_1_la-hermiteutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/hermiteutil.c' object='libhvs4_0_1_la-hermiteutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs4_0_1_la-hermiteutil.lo `test -f 'libhvs/hermiteutil.c' || echo '$(srcdir)/'`libhvs/hermiteutil.c
+
+libhvs4_0_1_la-factorialutil.lo: libhvs/factorialutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs4_0_1_la-factorialutil.lo -MD -MP -MF $(DEPDIR)/libhvs4_0_1_la-factorialutil.Tpo -c -o libhvs4_0_1_la-factorialutil.lo `test -f 'libhvs/factorialutil.c' || echo '$(srcdir)/'`libhvs/factorialutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs4_0_1_la-factorialutil.Tpo $(DEPDIR)/libhvs4_0_1_la-factorialutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/factorialutil.c' object='libhvs4_0_1_la-factorialutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs4_0_1_la-factorialutil.lo `test -f 'libhvs/factorialutil.c' || echo '$(srcdir)/'`libhvs/factorialutil.c
+
+libhvs4_0_1_la-gmres.lo: libhvs/gmres.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs4_0_1_la-gmres.lo -MD -MP -MF $(DEPDIR)/libhvs4_0_1_la-gmres.Tpo -c -o libhvs4_0_1_la-gmres.lo `test -f 'libhvs/gmres.c' || echo '$(srcdir)/'`libhvs/gmres.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs4_0_1_la-gmres.Tpo $(DEPDIR)/libhvs4_0_1_la-gmres.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/gmres.c' object='libhvs4_0_1_la-gmres.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs4_0_1_la-gmres.lo `test -f 'libhvs/gmres.c' || echo '$(srcdir)/'`libhvs/gmres.c
+
+libhvs4_0_1_la-vectorutil.lo: libhvs/vectorutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs4_0_1_la-vectorutil.lo -MD -MP -MF $(DEPDIR)/libhvs4_0_1_la-vectorutil.Tpo -c -o libhvs4_0_1_la-vectorutil.lo `test -f 'libhvs/vectorutil.c' || echo '$(srcdir)/'`libhvs/vectorutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs4_0_1_la-vectorutil.Tpo $(DEPDIR)/libhvs4_0_1_la-vectorutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/vectorutil.c' object='libhvs4_0_1_la-vectorutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs4_0_1_la-vectorutil.lo `test -f 'libhvs/vectorutil.c' || echo '$(srcdir)/'`libhvs/vectorutil.c
+
+libhvs4_0_1_la-matrixutil.lo: libhvs/matrixutil.c
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -MT libhvs4_0_1_la-matrixutil.lo -MD -MP -MF $(DEPDIR)/libhvs4_0_1_la-matrixutil.Tpo -c -o libhvs4_0_1_la-matrixutil.lo `test -f 'libhvs/matrixutil.c' || echo '$(srcdir)/'`libhvs/matrixutil.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libhvs4_0_1_la-matrixutil.Tpo $(DEPDIR)/libhvs4_0_1_la-matrixutil.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='libhvs/matrixutil.c' object='libhvs4_0_1_la-matrixutil.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libhvs4_0_1_la_CFLAGS) $(CFLAGS) -c -o libhvs4_0_1_la-matrixutil.lo `test -f 'libhvs/matrixutil.c' || echo '$(srcdir)/'`libhvs/matrixutil.c
+
+solver0-main.o: main.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver0_CFLAGS) $(CFLAGS) -MT solver0-main.o -MD -MP -MF $(DEPDIR)/solver0-main.Tpo -c -o solver0-main.o `test -f 'main.c' || echo '$(srcdir)/'`main.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/solver0-main.Tpo $(DEPDIR)/solver0-main.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='main.c' object='solver0-main.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver0_CFLAGS) $(CFLAGS) -c -o solver0-main.o `test -f 'main.c' || echo '$(srcdir)/'`main.c
+
+solver0-main.obj: main.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver0_CFLAGS) $(CFLAGS) -MT solver0-main.obj -MD -MP -MF $(DEPDIR)/solver0-main.Tpo -c -o solver0-main.obj `if test -f 'main.c'; then $(CYGPATH_W) 'main.c'; else $(CYGPATH_W) '$(srcdir)/main.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/solver0-main.Tpo $(DEPDIR)/solver0-main.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='main.c' object='solver0-main.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver0_CFLAGS) $(CFLAGS) -c -o solver0-main.obj `if test -f 'main.c'; then $(CYGPATH_W) 'main.c'; else $(CYGPATH_W) '$(srcdir)/main.c'; fi`
+
+solver2-main.o: main.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver2_CFLAGS) $(CFLAGS) -MT solver2-main.o -MD -MP -MF $(DEPDIR)/solver2-main.Tpo -c -o solver2-main.o `test -f 'main.c' || echo '$(srcdir)/'`main.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/solver2-main.Tpo $(DEPDIR)/solver2-main.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='main.c' object='solver2-main.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver2_CFLAGS) $(CFLAGS) -c -o solver2-main.o `test -f 'main.c' || echo '$(srcdir)/'`main.c
+
+solver2-main.obj: main.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver2_CFLAGS) $(CFLAGS) -MT solver2-main.obj -MD -MP -MF $(DEPDIR)/solver2-main.Tpo -c -o solver2-main.obj `if test -f 'main.c'; then $(CYGPATH_W) 'main.c'; else $(CYGPATH_W) '$(srcdir)/main.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/solver2-main.Tpo $(DEPDIR)/solver2-main.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='main.c' object='solver2-main.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver2_CFLAGS) $(CFLAGS) -c -o solver2-main.obj `if test -f 'main.c'; then $(CYGPATH_W) 'main.c'; else $(CYGPATH_W) '$(srcdir)/main.c'; fi`
+
+solver3-main.o: main.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver3_CFLAGS) $(CFLAGS) -MT solver3-main.o -MD -MP -MF $(DEPDIR)/solver3-main.Tpo -c -o solver3-main.o `test -f 'main.c' || echo '$(srcdir)/'`main.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/solver3-main.Tpo $(DEPDIR)/solver3-main.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='main.c' object='solver3-main.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver3_CFLAGS) $(CFLAGS) -c -o solver3-main.o `test -f 'main.c' || echo '$(srcdir)/'`main.c
+
+solver3-main.obj: main.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver3_CFLAGS) $(CFLAGS) -MT solver3-main.obj -MD -MP -MF $(DEPDIR)/solver3-main.Tpo -c -o solver3-main.obj `if test -f 'main.c'; then $(CYGPATH_W) 'main.c'; else $(CYGPATH_W) '$(srcdir)/main.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/solver3-main.Tpo $(DEPDIR)/solver3-main.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='main.c' object='solver3-main.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver3_CFLAGS) $(CFLAGS) -c -o solver3-main.obj `if test -f 'main.c'; then $(CYGPATH_W) 'main.c'; else $(CYGPATH_W) '$(srcdir)/main.c'; fi`
+
+solver4-main.o: main.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver4_CFLAGS) $(CFLAGS) -MT solver4-main.o -MD -MP -MF $(DEPDIR)/solver4-main.Tpo -c -o solver4-main.o `test -f 'main.c' || echo '$(srcdir)/'`main.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/solver4-main.Tpo $(DEPDIR)/solver4-main.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='main.c' object='solver4-main.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver4_CFLAGS) $(CFLAGS) -c -o solver4-main.o `test -f 'main.c' || echo '$(srcdir)/'`main.c
+
+solver4-main.obj: main.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver4_CFLAGS) $(CFLAGS) -MT solver4-main.obj -MD -MP -MF $(DEPDIR)/solver4-main.Tpo -c -o solver4-main.obj `if test -f 'main.c'; then $(CYGPATH_W) 'main.c'; else $(CYGPATH_W) '$(srcdir)/main.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/solver4-main.Tpo $(DEPDIR)/solver4-main.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='main.c' object='solver4-main.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(solver4_CFLAGS) $(CFLAGS) -c -o solver4-main.obj `if test -f 'main.c'; then $(CYGPATH_W) 'main.c'; else $(CYGPATH_W) '$(srcdir)/main.c'; fi`
 
 test_gmres.o: test/test_gmres.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT test_gmres.o -MD -MP -MF $(DEPDIR)/test_gmres.Tpo -c -o test_gmres.o `test -f 'test/test_gmres.c' || echo '$(srcdir)/'`test/test_gmres.c
