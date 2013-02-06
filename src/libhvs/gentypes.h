@@ -13,6 +13,11 @@
 #define HVS_DOUBLE 2
 #define HVS_LONG_DOUBLE 3
 
+#define HVS_GMRES_MAX_INNER_MATRIX 150
+#ifndef MAX_GMRES_RESTARTS
+#define MAX_GMRES_RESTARTS 30
+#endif
+
 // Change this constant to change float type
 #ifndef HVS_FLOAT_TYPE
 #define HVS_FLOAT_TYPE HVS_DOUBLE
@@ -33,6 +38,7 @@
 // Initialize unsigned int
 #define UINT unsigned int
 
+
 // Define math type dependant macros
 #if HVS_FLOAT_TYPE==HVS_FLOAT
 #define M_EXP(x) expf((x))
@@ -40,18 +46,21 @@
 #define M_SQRT(x) sqrtf((x))
 #define M_ABS(x) fabsf((x))
 #define HVS_EPS FLT_EPSILON
+#define HVS_GMRES_PRECISION (FLOAT_TYPE)1.0e-4
 #elif HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
 #define M_EXP(x) expl((x))
 #define M_POW(x,y) powl((x),(y))
 #define M_SQRT(x) sqrtl((x))
 #define M_ABS(x) fabsl((x))
 #define HVS_EPS LDBL_EPSILON
+#define HVS_GMRES_PRECISION (FLOAT_TYPE)1.0e-10
 #else
 #define M_EXP(x) exp((x))
 #define M_POW(x,y) pow((x),(y))
 #define M_SQRT(x) sqrt((x))
 #define M_ABS(x) fabs((x))
 #define HVS_EPS DBL_EPSILON
+#define HVS_GMRES_PRECISION (FLOAT_TYPE)1.0e-6
 #endif
 
 #endif

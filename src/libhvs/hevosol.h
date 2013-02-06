@@ -1,10 +1,25 @@
 //
-// Copyright (C) 2010, Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
+// Copyright (C) 2010-2013, Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
 // Author: Vitalii Ostrovskyi <vitalii@ostrovskyi.org.ua>
 //
 
 #ifndef HEVOSOL_H
 #define HEVOSOL_H 1
+
+//#define HVS_PROFILE 1
+
+#ifdef HVS_PROFILE
+typedef struct {
+    int init;
+    int integration;
+    int vorticity_update;
+    int init_moments;
+    int init_coefs;
+    int rk_step;
+    int eval_equation;
+} Timings;
+extern Timings timings;
+#endif
 
 // Number of moments to include
 #ifndef NMOMENTS
@@ -50,9 +65,6 @@
 	(m1)*NMOMENTS_3+(m2)*NMOMENTS_2+\
 	(i)*NMOMENTS_1+(j))
 #define MOM_INDEX(i,j) (((i)+(j))*((i)+(j)+1)/2+(j))
-
-#define HVS_GMRES_PRECISION (FLOAT_TYPE)1.0e-6
-#define HVS_GMRES_MAX_INNER_MATRIX 150
 
 //#define HVS_DEBUG 1
 

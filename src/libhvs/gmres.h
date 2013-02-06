@@ -6,10 +6,6 @@
 #ifndef HVS_GMRES_H
 #define HVS_GMRES_H 1
 
-#ifndef MAX_GMRES_RESTARTS
-#define MAX_GMRES_RESTARTS 30
-#endif
-
 #include "gentypes.h"
 
 int gmres(const FLOAT_TYPE *A, const FLOAT_TYPE *x0, const FLOAT_TYPE *b, UINT size, 

@@ -18,6 +18,12 @@
 #error "Currently implemented only 4 moments."
 #endif
 
+#ifdef HVS_PROFILE
+#include <time.h>
+
+Timings timings = {.init = 0, .integration=0, .init_moments=0, .init_coefs=0, .rk_step=0, .eval_equation=0, .vorticity_update=0 };
+#endif
+
 int init_solver_by_moments(const hvs_params *params, UINT ncenters, const hvs_centers centers, const hvs_moments moments,
 				hvs_state **sstate) {
 	hvs_state* state = (hvs_state *) malloc(sizeof(hvs_state));
@@ -121,6 +127,10 @@ int init_solver_by_moments(const hvs_params *params, UINT ncenters, const hvs_ce
 }
 
 int init_solver(const hvs_params *params, hvs_state **sstate) {
+#ifdef HVS_PROFILE
+	time_t starttime, endtime;
+	starttime = time(NULL);
+#endif
 	hvs_file* file;
 	hvs_position *pos = NULL;
 	hvs_vorticity *vort = NULL;
@@ -313,6 +323,10 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 	init_coefs(state->coefs);
 
 	*sstate = state;
+#ifdef HVS_PROFILE
+	endtime = time(NULL);
+	timings.init = (int)(endtime-starttime);
+#endif
 	return HVS_OK;
 }
 
@@ -349,6 +363,10 @@ void free_solver(hvs_state **sstate) {
 }
 
 int run_solver(const hvs_params *params, hvs_state *state) {
+#ifdef HVS_PROFILE
+    time_t starttime, endtime;
+    starttime = time(NULL);
+#endif
 	unsigned int i;
 	char status;
 	unsigned int stepsnum = round((params->t1-params->t0)/params->timestep);
@@ -360,6 +378,10 @@ int run_solver(const hvs_params *params, hvs_state *state) {
 		}
 	}
 	state->curtime = tn;
+#ifdef HVS_PROFILE
+    endtime = time(NULL);
+    timings.integration = (int)(endtime-starttime);
+#endif
 	return update_vorticity_field(state);
 }
 

@@ -173,8 +173,18 @@ int main(int argc, char **argv) {
 	// Deinitialize solver
 	free_solver(&state);
 	endtime = time(NULL);
-	if(!quiet)
+	if(!quiet) {
+#ifdef HVS_PROFILE
+		printf("Initialization moments time: %d sec\n",timings.init_moments);
+		printf("Initialization coeficients time: %d sec\n",timings.init_coefs);
+		printf("Initialization time: %d sec\n",timings.init);
+		printf("Equation evaluation time: %d sec\n",timings.eval_equation);
+		printf("RK step time: %d sec\n",timings.rk_step);
+		printf("Update vorticity time: %d sec\n",timings.vorticity_update);
+		printf("Integration time: %d sec\n",timings.integration);
+#endif
 		printf("Total computation time: %d sec\n",(int)(endtime-starttime));
+	}
 	return 0;
 }
 

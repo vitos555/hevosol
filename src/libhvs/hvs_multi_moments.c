@@ -7,6 +7,10 @@
 #include <stdio.h>
 #endif
 
+#ifdef HVS_PROFILE
+#include <time.h>
+#endif
+
 int init_ode_data(hvs_ode_data *data, hvs_state *input) {
 	data->ncenters = input->ncenters;
 	data->lambdasq = input->lambdasq;
@@ -39,6 +43,10 @@ int free_ode_data(hvs_ode_data *data) {
 int update_vorticity_field(hvs_state *state) {
 	int i,j;
 	FLOAT_TYPE sum;
+#ifdef HVS_PROFILE
+    time_t starttime, endtime;
+    starttime = time(NULL);
+#endif
 
 #if HVS_DEBUG
 	printf("update_vorticity_field\n");
@@ -55,6 +63,11 @@ int update_vorticity_field(hvs_state *state) {
 		}
 		state->vorticity_field[i] = sum;
 	}
+#ifdef HVS_PROFILE
+    endtime = time(NULL);
+    timings.vorticity_update += (int)(endtime-starttime);
+    timings.vorticity_update = (int)(timings.vorticity_update/2);
+#endif
 	return HVS_OK;
 }
 
@@ -62,6 +75,11 @@ int init_moments(hvs_state *state) {
 	FLOAT_TYPE *A,*x;
 	UINT i,j,k;
 	int status;
+
+#ifdef HVS_PROFILE
+    time_t starttime, endtime;
+    starttime = time(NULL);
+#endif
 
 #if HVS_DEBUG
 	printf("init_moments\n");
@@ -97,13 +115,21 @@ int init_moments(hvs_state *state) {
 	}
 	free(A);
 	free(x);
+#ifdef HVS_PROFILE
+    endtime = time(NULL);
+    timings.init_moments = (int)(endtime-starttime);
+#endif
 	return HVS_OK;
 }
 
-int eval_eq(hvs_ode_data *input, hvs_ode_data *output, hvs_coefs *coefs, FLOAT_TYPE time) {
+int eval_eq(hvs_ode_data *input, hvs_ode_data *output, hvs_coefs *coefs, FLOAT_TYPE time_val) {
 	FLOAT_TYPE lambdasq = input->lambdasq;
 	FLOAT_TYPE gamma1,gamma2;
 	int i0,j0,k,k1,k2,l,l1,l2,m,m1,m2,i,j;
+#ifdef HVS_PROFILE
+    time_t starttime, endtime;
+    starttime = time(NULL);
+#endif
 	output->lambdasq = input->lambdasq;
 
 #if HVS_DEBUG
@@ -111,7 +137,7 @@ int eval_eq(hvs_ode_data *input, hvs_ode_data *output, hvs_coefs *coefs, FLOAT_T
 #endif
 
 	// Parallelize execution
-	#pragma omp parallel default(none) shared(input,output,coefs,time,lambdasq)
+	#pragma omp parallel default(none) shared(input,output,coefs,time_val,lambdasq)
 	{
 	// First evaluate centers equation
 	#pragma omp for private(i0,j0,l,m,l1,l2,m1,m2)
@@ -213,6 +239,11 @@ gamma2+=coefs->gamma2[COEF_INDEX(k1,k2,l1,l2,m1,m2,i,j)]/
 			}
 	} // end for
 	} // end pragma omp parallel
+#ifdef HVS_PROFILE
+    endtime = time(NULL);
+    timings.eval_equation += (int)(endtime-starttime);
+    timings.eval_equation = (int)(timings.eval_equation/2);
+#endif
 	return HVS_OK;
 }
 
@@ -220,6 +251,11 @@ int rk4_hvs_solve(hvs_state *curdata, FLOAT_TYPE tn, FLOAT_TYPE timestep, FLOAT_
 	hvs_ode_data k1, k2, k3, k4, kt;
 	int status = HVS_OK;
 	int i0,i,i1,i2;
+
+#ifdef HVS_PROFILE
+    time_t starttime, endtime;
+    starttime = time(NULL);
+#endif
 
 #if HVS_DEBUG
 	printf("rk4_hvs_solve\n");
@@ -333,11 +369,22 @@ int rk4_hvs_solve(hvs_state *curdata, FLOAT_TYPE tn, FLOAT_TYPE timestep, FLOAT_
 	printf("m00=%.12Lf,m20=%.12Lf,m11=%.12Lf,m02=%.12Lf\n",curdata->moments[1][0],curdata->moments[1][3],curdata->moments[1][4],curdata->moments[1][5]);
 	printf("y1=%.12Lf,y2=%.12Lf\n", curdata->centers[0].y, curdata->centers[1].y);
 #endif
+
+#ifdef HVS_PROFILE
+    endtime = time(NULL);
+    timings.rk_step += (int)(endtime-starttime);
+    timings.rk_step = (int)(timings.rk_step/2);
+#endif
+
 	return HVS_OK;
 }
 
 int init_coefs(hvs_coefs *coefs) {
 	int k,k1,k2,m,m1,m2,l,l1,l2,i,j;
+#ifdef HVS_PROFILE
+    time_t starttime, endtime;
+    starttime = time(NULL);
+#endif
 
 #if HVS_DEBUG
 	printf("init_coefs\n");
@@ -368,6 +415,10 @@ coefs->gamma2[COEF_INDEX(k1,k2,l1,l2,m1,m2,i,j)]=(FLOAT_TYPE)POWN1(l1+l2)*
 			}
 		}
 	}
+#ifdef HVS_PROFILE
+    endtime = time(NULL);
+    timings.init_coefs = (int)(endtime-starttime);
+#endif
 }
 
 
