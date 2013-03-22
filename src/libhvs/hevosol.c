@@ -126,7 +126,7 @@ int init_solver_by_moments(const hvs_params *params, UINT ncenters, const hvs_ce
 	return HVS_OK;
 }
 
-int init_solver(const hvs_params *params, hvs_state **sstate) {
+int init_solver(hvs_params *params, hvs_state **sstate) {
 #ifdef HVS_PROFILE
 	time_t starttime, endtime;
 	starttime = time(NULL);
@@ -142,30 +142,44 @@ int init_solver(const hvs_params *params, hvs_state **sstate) {
 	if (params->initvortfile==NULL)
 		if (params->initmomentsfile==NULL)
 			return HVS_ERR_WRONG_USAGE;
-		else { // We don't have vorticity file but we have moments
-			// Init file handler
+	if ((params->initmomentsfile!=NULL) || (params->tmpmomentsfile!=NULL)) {
+		if (params->tmpmomentsfile!=NULL) {
+			// First try to init file handler of tmp moments file
+			if (initfile(params->tmpmomentsfile, &file)) {
+				// On failure use file handler of init moments file
+				if (initfile(params->initmomentsfile, &file)) {
+					return HVS_ERR;
+				}
+			} else {
+				if (read_time(file, &params->tmpmomentstime)<1) {
+					return HVS_ERR;
+				}
+			}
+		} else {
+			// Init file handler of init moments file
 			if (initfile(params->initmomentsfile, &file)) {
 				return HVS_ERR;
 			}
-			// Read data
-			do {
-				cursize += status;
-				if ((centers = (hvs_position *)realloc(centers, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_center)))==NULL) {
-					return HVS_ERR;
-				}
-				if ((moments = realloc(moments, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_moment)))==NULL) {
-					return HVS_ERR;
-				}
-			} while ((status = read_moments(file,HVS_READ_BLOCK_SIZE,
-				&centers[cursize],
-				&moments[cursize])) == HVS_READ_BLOCK_SIZE);
-			if (status < 0) {
-				return status;
-			}
-			cursize += status;
-			closefile(&file);
-			return init_solver_by_moments(params, cursize, centers, moments, sstate);
 		}
+		// Read data
+		do {
+			cursize += status;
+			if ((centers = (hvs_position *)realloc(centers, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_center)))==NULL) {
+				return HVS_ERR;
+			}
+			if ((moments = realloc(moments, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_moment)))==NULL) {
+				return HVS_ERR;
+			}
+		} while ((status = read_moments(file,HVS_READ_BLOCK_SIZE,
+			&centers[cursize],
+			&moments[cursize])) == HVS_READ_BLOCK_SIZE);
+		if (status < 0) {
+			return status;
+		}
+		cursize += status;
+		closefile(&file);
+		return init_solver_by_moments(params, cursize, centers, moments, sstate);
+	}
 
 	// Init file handler
 	if (initfile(params->initvortfile, &file)) {
@@ -365,6 +379,7 @@ void free_solver(hvs_state **sstate) {
 int run_solver(const hvs_params *params, hvs_state *state) {
 #ifdef HVS_PROFILE
     time_t starttime, endtime;
+    time_t startstep, endstep;
     starttime = time(NULL);
 #endif
 	unsigned int i;
@@ -372,15 +387,39 @@ int run_solver(const hvs_params *params, hvs_state *state) {
 	unsigned int stepsnum = round((params->t1-params->t0)/params->timestep);
 	FLOAT_TYPE tn;
 	tn = params->t0;
+	if (params->tmpmomentstime > 0)
+		if (params->tmpmomentstime < params->t1) {
+			if (params->tmpmomentstime > params->t0) {
+				tn = params->tmpmomentstime;
+				stepsnum = round((params->t1-tn)/params->timestep);
+			}
+		} else {
+			// Skip steps until we get into the interval of previous stop
+			return HVS_SKIP_STEP;
+		}
 	for(i=0;i<stepsnum;i++) {
+#ifdef HVS_PROFILE
+		int duration;
+		startstep = time(NULL);
+#endif
 		if ((status = step_solver(state, &tn, params)) != HVS_OK) {
 			return status;
 		}
+		if (params->tmpmomentsfile!=NULL) {
+			write_tmp_moments(state, tn, params->tmpmomentsfile);
+		}
+#ifdef HVS_PROFILE
+		endstep = time(NULL);
+		duration = (int)(endstep-startstep);
+		if (duration>5) {
+			printf("Step %d: %d sec\n", i, duration);
+		}
+#endif
 	}
 	state->curtime = tn;
 #ifdef HVS_PROFILE
-    endtime = time(NULL);
-    timings.integration = (int)(endtime-starttime);
+	endtime = time(NULL);
+	timings.integration = (int)(endtime-starttime);
 #endif
 	return update_vorticity_field(state);
 }

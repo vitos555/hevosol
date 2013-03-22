@@ -6,7 +6,7 @@
 #ifndef HEVOSOL_H
 #define HEVOSOL_H 1
 
-//#define HVS_PROFILE 1
+#define HVS_PROFILE 1
 
 #ifdef HVS_PROFILE
 typedef struct {
@@ -92,6 +92,8 @@ typedef struct {
 	char	*initvortfile; /* Initial vorticity field file name */
 	char	*initcentersfile; /* Initial centers positions file name */
 	char	*initmomentsfile; /* Initial moments file name */
+	char	*tmpmomentsfile; /* Temporary file to store moments */
+	FLOAT_TYPE	tmpmomentstime; /* Integration stop time */
 	FLOAT_TYPE	t0;
 	FLOAT_TYPE	t1;
 	FLOAT_TYPE	timestep;
@@ -127,7 +129,7 @@ typedef struct {
 	UINT		ncenters;
 } hvs_ode_data;
 
-int init_solver(const hvs_params *params, hvs_state **sstate);
+int init_solver(hvs_params *params, hvs_state **sstate);
 int init_solver_by_moments(const hvs_params *params, UINT ncenters, const hvs_centers centers, const hvs_moments moments,
 				hvs_state **sstate);
 void free_solver(hvs_state **sstate);

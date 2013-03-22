@@ -21,12 +21,14 @@ void closefile(hvs_file **file);
 ssize_t read_vorticity(const hvs_file *filename, size_t count, hvs_position *pos, hvs_vorticity *vort);
 ssize_t read_centers(const hvs_file *file, size_t count, hvs_centers pos);
 ssize_t read_moments(const hvs_file *file, size_t count, hvs_centers pos, hvs_moments moment);
+ssize_t read_time(const hvs_file *file, FLOAT_TYPE *time);
 
 ssize_t write_vorticity(const hvs_state *state, const char *filename);
 ssize_t append_vorticity(const hvs_state *state, const char *filename);
 ssize_t write_params(const hvs_params *params, const char *filename);
 ssize_t append_params(const hvs_params *params, const char *filename);
 ssize_t write_moments(const hvs_state *state, const char *filename);
+ssize_t write_tmp_moments(const hvs_state *state, FLOAT_TYPE time, const char *filename);
 ssize_t append_moments(const hvs_state *state, const char *filename);
 ssize_t write_centers(const hvs_state *state, const char *filename);
 ssize_t append_centers(const hvs_state *state, const char *filename);

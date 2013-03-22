@@ -14,7 +14,7 @@ void usage(FILE *fh,char **argv);
 int main(int argc, char **argv) {
 	hvs_state* state;
 	hvs_params params;
-	int status,i,c,index,quiet=0,reqargs=0,num=0;
+	int status,i,c,index,quiet=0,reqargs=0,num=0,recovery_mode=0;
 	char *outfile=NULL;
 	float t,t1,t2;
 	time_t starttime,endtime;
@@ -34,9 +34,11 @@ int main(int argc, char **argv) {
 	params.initvortfile = NULL;
 	params.initcentersfile = NULL;
 	params.initmomentsfile = NULL;
+	params.tmpmomentsfile = NULL;
+	params.tmpmomentstime = -1.0;
 
 	opterr = 0; 
-	while ((c = getopt(argc, argv, "hqv:c:t:l:n:b:e:m:o:x:y:p:")) != -1)
+	while ((c = getopt(argc, argv, "hqrv:c:t:l:n:b:e:m:o:x:y:p:")) != -1)
 		switch (c)
 		{
 		case 'v':
@@ -90,6 +92,10 @@ int main(int argc, char **argv) {
 		case 'q':
 			quiet = 1;
 			break;
+		// Recovery mode - store moments file after each step.
+		case 'r':
+			recovery_mode = 1;
+			break;
 		case '?':
 		default:
 			usage(stderr,argv);
@@ -119,6 +125,11 @@ int main(int argc, char **argv) {
 		fprintf(stderr,"Vorticity data file is missing.\n");
 		usage(stderr,argv);
 		return 1;
+	}
+
+	// Store moments after each step into tmpmomentsfile
+	if (recovery_mode) {
+		params.tmpmomentsfile = "hevosol.tmpmomentsfile";
 	}
 
 	// Get the time when the solver starts working
@@ -154,6 +165,8 @@ int main(int argc, char **argv) {
 				append_centers(state,outfile);
 				append_moments(state,outfile);
 				append_vorticity(state,outfile);
+			} else if (status == HVS_SKIP_STEP) {
+				// Do nothing
 			} else {
 				hvserror(status,"Run error");
 				return 1;
@@ -192,6 +205,7 @@ void usage(FILE *fh,char **argv) {
 	fprintf(fh, "Hermitian vorticity solver.\n");
 	fprintf(fh, "Usage: %s [-h|-q] -v file -o file [-t float|-l float|-n float|-b float|-e float]\n", argv[0]);
 	fprintf(fh, "-h\t\tShow this message.\n");
+	fprintf(fh, "-r\t\tRun in safe mode (save recovery moments file after each step).\n");
 	fprintf(fh, "-v file\t\tVorticity data file.\n");
 	fprintf(fh, "-m file\t\tMoments data file.\n");
 	fprintf(fh, "-o file\t\tOutput file name.\n");

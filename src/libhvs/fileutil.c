@@ -135,6 +135,20 @@ ssize_t read_moments(const hvs_file *file, size_t count, hvs_center *pos, hvs_mo
 	return readcount;
 }
 
+ssize_t read_time(const hvs_file *file, FLOAT_TYPE *time) {
+	int readcount = 0;
+	if (!feof(file->fh)) {
+#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
+		readcount = fscanf(file->fh, "%Lf\n", time);
+#elif HVS_FLOAT_TYPE==HVS_FLOAT
+		readcount = fscanf(file->fh, "%f\n", time);
+#else
+		readcount = fscanf(file->fh, "%lf\n", time);
+#endif
+	}
+	return readcount;
+}
+
 ssize_t write_vorticity(const hvs_state *state, const char *filename) {
 	int writecount = 0;
 	FILE *fh;
@@ -230,6 +244,31 @@ ssize_t write_moments(const hvs_state *state, const char *filename) {
 		return HVS_ERR;
 	}
 	fprintf(fh,"=Moments (0,0)	(2,0)	(1,1)	(0,2) =\n");
+	for(i0=0;i0<state->ncenters;i0++) {
+		for(i=0;i<NCOMBS;i++)
+#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
+			fprintf(fh,"%Lf\t",state->moments[i0][i]);
+#else
+			fprintf(fh,"%f\t",state->moments[i0][i]);
+#endif
+		fprintf(fh,"\n");
+		writecount+=1;
+	}
+	fclose(fh);
+	return writecount;
+}
+ssize_t write_tmp_moments(const hvs_state *state, FLOAT_TYPE time, const char *filename) {
+	int writecount = 0;
+	int i0,i;
+	FILE *fh;
+	if ((fh = fopen(filename, "w+")) == NULL) {
+		return HVS_ERR;
+	}
+#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
+	fprintf(fh,"%Lf\n",time);
+#else
+	fprintf(fh,"%f\n",time);
+#endif
 	for(i0=0;i0<state->ncenters;i0++) {
 		for(i=0;i<NCOMBS;i++)
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
