@@ -6,7 +6,7 @@
 #ifndef HEVOSOL_H
 #define HEVOSOL_H 1
 
-#define HVS_PROFILE 1
+//#define HVS_PROFILE 1
 
 #ifdef HVS_PROFILE
 typedef struct {

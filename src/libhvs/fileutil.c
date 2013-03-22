@@ -5,6 +5,7 @@ int initfile(const char *filename, hvs_file **file) {
 	hvs_file *ifile = (hvs_file *)malloc(sizeof(hvs_file));
 	FILE *fh;
 	if ((fh = fopen(filename,"r")) == NULL) {
+		*file = NULL;
 		return HVS_ERR;
 	}
 	ifile->fh = fh;
@@ -270,6 +271,15 @@ ssize_t write_tmp_moments(const hvs_state *state, FLOAT_TYPE time, const char *f
 	fprintf(fh,"%f\n",time);
 #endif
 	for(i0=0;i0<state->ncenters;i0++) {
+#if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
+		fprintf(fh,"%Lf\t%Lf\t",
+			state->centers[i0].x,
+			state->centers[i0].y);
+#else
+		fprintf(fh,"%f\t%f\t",
+			state->centers[i0].x,
+			state->centers[i0].y);
+#endif
 		for(i=0;i<NCOMBS;i++)
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
 			fprintf(fh,"%Lf\t",state->moments[i0][i]);

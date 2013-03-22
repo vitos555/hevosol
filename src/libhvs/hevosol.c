@@ -131,7 +131,7 @@ int init_solver(hvs_params *params, hvs_state **sstate) {
 	time_t starttime, endtime;
 	starttime = time(NULL);
 #endif
-	hvs_file* file;
+	hvs_file* file = NULL;
 	hvs_position *pos = NULL;
 	hvs_vorticity *vort = NULL;
 	int status = 0;
@@ -147,9 +147,10 @@ int init_solver(hvs_params *params, hvs_state **sstate) {
 			// First try to init file handler of tmp moments file
 			if (initfile(params->tmpmomentsfile, &file)) {
 				// On failure use file handler of init moments file
-				if (initfile(params->initmomentsfile, &file)) {
-					return HVS_ERR;
-				}
+				if (params->initmomentsfile!=NULL) 
+					if (initfile(params->initmomentsfile, &file)) {
+						return HVS_ERR;
+					}
 			} else {
 				if (read_time(file, &params->tmpmomentstime)<1) {
 					return HVS_ERR;
@@ -161,24 +162,27 @@ int init_solver(hvs_params *params, hvs_state **sstate) {
 				return HVS_ERR;
 			}
 		}
-		// Read data
-		do {
+		
+		if (file!=NULL) {
+			// Read data
+			do {
+				cursize += status;
+				if ((centers = (hvs_position *)realloc(centers, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_center)))==NULL) {
+					return HVS_ERR;
+				}
+				if ((moments = realloc(moments, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_moment)))==NULL) {
+					return HVS_ERR;
+				}
+			} while ((status = read_moments(file,HVS_READ_BLOCK_SIZE,
+				&centers[cursize],
+				&moments[cursize])) == HVS_READ_BLOCK_SIZE);
+			if (status < 0) {
+				return status;
+			}
 			cursize += status;
-			if ((centers = (hvs_position *)realloc(centers, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_center)))==NULL) {
-				return HVS_ERR;
-			}
-			if ((moments = realloc(moments, (cursize+HVS_READ_BLOCK_SIZE)*sizeof(hvs_moment)))==NULL) {
-				return HVS_ERR;
-			}
-		} while ((status = read_moments(file,HVS_READ_BLOCK_SIZE,
-			&centers[cursize],
-			&moments[cursize])) == HVS_READ_BLOCK_SIZE);
-		if (status < 0) {
-			return status;
+			closefile(&file);
+			return init_solver_by_moments(params, cursize, centers, moments, sstate);
 		}
-		cursize += status;
-		closefile(&file);
-		return init_solver_by_moments(params, cursize, centers, moments, sstate);
 	}
 
 	// Init file handler
