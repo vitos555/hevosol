@@ -113,7 +113,7 @@ ssize_t read_moments(const hvs_file *file, size_t count, hvs_center *pos, hvs_mo
 #else
 			if ((currread = fscanf(file->fh, "%lf", &m))==1) {
 #endif
-				if ((i==1)||(i==2)) m=0.0;
+//				if ((i==1)||(i==2)) m=0.0;
 				moment[readcount][i]=m;
 			} else if (currread == EOF) {
 				continue;
