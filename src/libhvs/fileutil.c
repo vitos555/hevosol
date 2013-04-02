@@ -78,19 +78,21 @@ ssize_t read_moments(const hvs_file *file, size_t count, hvs_center *pos, hvs_mo
 	int readcount = 0;
 	int currread = 0;
 	FLOAT_TYPE x,y,m;
-	int i;
-	while (!feof(file->fh) && readcount<count) {
+	int i = 0, offset = 0;
+	char buffer[HVS_READ_BLOCK_SIZE];
+	char *data;
+	while (fgets(buffer, HVS_READ_BLOCK_SIZE, file->fh) && readcount<count) {
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
-		if ((currread = fscanf(file->fh, "%Lf\t%Lf", &x, &y))==2) {
+		if ((currread = sscanf(buffer, " %Lf %Lf%n", &x, &y, &offset))>=2) {
 #elif HVS_FLOAT_TYPE==HVS_FLOAT
-		if ((currread = fscanf(file->fh, "%f\t%f", &x, &y))==2) {
+		if ((currread = sscanf(buffer, " %f %f%n", &x, &y, &offset))>=2) {
 #else
-		if ((currread = fscanf(file->fh, "%lf\t%lf", &x, &y))==2) {
+		if ((currread = sscanf(buffer, " %lf %lf%n", &x, &y, &offset))>=2) {
 #endif
+			data = buffer;
 			pos[readcount].x=x;
 			pos[readcount].y=y;
-		} else if (currread == EOF) {
-			continue;
+			data += offset;
 		} else {
 #ifdef HVS_DEBUG
 			fprintf(stderr,"Currread: %i\n",currread);
@@ -98,38 +100,22 @@ ssize_t read_moments(const hvs_file *file, size_t count, hvs_center *pos, hvs_mo
 			return HVS_ERR_WRONG_FILE_FORMAT;
 		}
 		for(i=0;i<NCOMBS;i++) {
-			if ((currread = fscanf(file->fh,"\t"))==1) {
-			} else if (currread == EOF) {
-				continue;
-			} else {
-#ifdef HVS_DEBUG
-				fprintf(stderr,"Currread: %i\n",currread);
-#endif
-			}
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
-			if ((currread = fscanf(file->fh, "%Lf", &m))==1) {
+			if ((currread = sscanf(data, " %Lf%n", &m, &offset))>=1) {
 #elif HVS_FLOAT_TYPE==HVS_FLOAT
-			if ((currread = fscanf(file->fh, "%f", &m))==1) {
+			if ((currread = sscanf(data, " %f%n", &m, &offset))>=1) {
 #else
-			if ((currread = fscanf(file->fh, "%lf", &m))==1) {
+			if ((currread = sscanf(data, " %lf%n", &m, &offset))>=1) {
 #endif
 //				if ((i==1)||(i==2)) m=0.0;
 				moment[readcount][i]=m;
-			} else if (currread == EOF) {
-				continue;
+				data += offset;
 			} else {
 #ifdef HVS_DEBUG
 				fprintf(stderr,"Currread: %i\n",currread);
 #endif
+				return HVS_ERR_WRONG_FILE_FORMAT;
 			}
-		}
-		if ((currread = fscanf(file->fh,"\n"))==1) {
-		} else if (currread == EOF) {
-			continue;
-		} else {
-#ifdef HVS_DEBUG
-			fprintf(stderr,"Currread: %i\n",currread);
-#endif
 		}
 		readcount++;
 	}
@@ -138,13 +124,14 @@ ssize_t read_moments(const hvs_file *file, size_t count, hvs_center *pos, hvs_mo
 
 ssize_t read_time(const hvs_file *file, FLOAT_TYPE *time) {
 	int readcount = 0;
-	if (!feof(file->fh)) {
+	char buffer[HVS_READ_BLOCK_SIZE];
+	if (fgets(buffer, HVS_READ_BLOCK_SIZE, file->fh)) {
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
-		readcount = fscanf(file->fh, "%Lf\n", time);
+		readcount = sscanf(buffer, " %Lf", time);
 #elif HVS_FLOAT_TYPE==HVS_FLOAT
-		readcount = fscanf(file->fh, "%f\n", time);
+		readcount = sscanf(buffer, " %f", time);
 #else
-		readcount = fscanf(file->fh, "%lf\n", time);
+		readcount = sscanf(buffer, " %lf", time);
 #endif
 	}
 	return readcount;
