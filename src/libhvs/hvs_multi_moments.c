@@ -288,9 +288,9 @@ int rk4_hvs_solve(hvs_state *curdata, FLOAT_TYPE tn, FLOAT_TYPE timestep, FLOAT_
 	}
 	
 #if HVS_DEBUG>2
-	printf("m00=%.12Lf,m20=%.12Lf,m11=%.12Lf,m02=%.12Lf\n",k1.moments[0][0],k1.moments[0][3],k1.moments[0][4],k1.moments[0][5]);
-	printf("m00=%.12Lf,m20=%.12Lf,m11=%.12Lf,m02=%.12Lf\n",k1.moments[1][0],k1.moments[1][3],k1.moments[1][4],k1.moments[1][5]);
-	printf("y1=%.12Lf,y2=%.12Lf\n", k1.centers[0].y, k1.centers[1].y);
+	printf("m00=%f,m20=%f,m11=%f,m02=%f\n",k1.moments[0][0],k1.moments[0][3],k1.moments[0][4],k1.moments[0][5]);
+	printf("m00=%f,m20=%f,m11=%f,m02=%f\n",k1.moments[1][0],k1.moments[1][3],k1.moments[1][4],k1.moments[1][5]);
+	printf("y1=%.12f,y2=%.1f\n", k1.centers[0].y, k1.centers[1].y);
 #endif
 
 	// Update kt
@@ -365,9 +365,9 @@ int rk4_hvs_solve(hvs_state *curdata, FLOAT_TYPE tn, FLOAT_TYPE timestep, FLOAT_
 	free_ode_data(&k4);
 	
 #if HVS_DEBUG>2
-	printf("m00=%.12Lf,m20=%.12Lf,m11=%.12Lf,m02=%.12Lf\n",curdata->moments[0][0],curdata->moments[0][3],curdata->moments[0][4],curdata->moments[0][5]);
-	printf("m00=%.12Lf,m20=%.12Lf,m11=%.12Lf,m02=%.12Lf\n",curdata->moments[1][0],curdata->moments[1][3],curdata->moments[1][4],curdata->moments[1][5]);
-	printf("y1=%.12Lf,y2=%.12Lf\n", curdata->centers[0].y, curdata->centers[1].y);
+	printf("m00=%f,m20=%f,m11=%f,m02=%f\n",curdata->moments[0][0],curdata->moments[0][3],curdata->moments[0][4],curdata->moments[0][5]);
+	printf("m00=%f,m20=%f,m11=%f,m02=%f\n",curdata->moments[1][0],curdata->moments[1][3],curdata->moments[1][4],curdata->moments[1][5]);
+	printf("y1=%f,y2=%f\n", curdata->centers[0].y, curdata->centers[1].y);
 #endif
 
 #ifdef HVS_PROFILE
@@ -435,7 +435,7 @@ int step_solver(hvs_state *state, FLOAT_TYPE *tn, const hvs_params *params) {
 	(*tn) = (*tn)+params->timestep;
 
 #if HVS_DEBUG>2
-	printf("%Lf=%Lf\n",state->lambdasq,(*tn)*4.0*params->nu+params->lambda0*params->lambda0);
+	printf("%f=%f\n",state->lambdasq,(*tn)*4.0*params->nu+params->lambda0*params->lambda0);
 #endif
 
 	return HVS_OK;

@@ -134,7 +134,7 @@ int init_solver(hvs_params *params, hvs_state **sstate) {
 	hvs_file* file = NULL;
 	hvs_position *pos = NULL;
 	hvs_vorticity *vort = NULL;
-	int status = 0;
+	int status = 0, result;
 	UINT cursize = 0;
 	hvs_state* state = NULL;
 	hvs_moments moments = NULL;
@@ -181,7 +181,10 @@ int init_solver(hvs_params *params, hvs_state **sstate) {
 			}
 			cursize += status;
 			closefile(&file);
-			return init_solver_by_moments(params, cursize, centers, moments, sstate);
+			result = init_solver_by_moments(params, cursize, centers, moments, sstate);
+			free(centers);
+			free(moments);
+			return result;
 		}
 	}
 

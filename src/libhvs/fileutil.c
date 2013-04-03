@@ -109,6 +109,9 @@ ssize_t read_moments(const hvs_file *file, size_t count, hvs_center *pos, hvs_mo
 #endif
 //				if ((i==1)||(i==2)) m=0.0;
 				moment[readcount][i]=m;
+#if HVS_DEBUG>3
+				fprintf(stderr,"Readcount: %i, i: %i, m: %f\n",readcount, i, m);
+#endif
 				data += offset;
 			} else {
 #ifdef HVS_DEBUG
