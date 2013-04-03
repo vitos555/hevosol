@@ -19,6 +19,8 @@
 #define HVS_ERR_WRONG_SIZE -5
 #define HVS_ERR_GMRES_GOT_NAN -6
 #define HVS_ERR_GMRES_MAX_RESTART -7
+#define HVS_ERR_NOT_ENOUGH_DATA -8
+#define HVS_ERR_FIRST_MOMENT_ZERO -9
 
 void hvserror(int status, const char *string);
 

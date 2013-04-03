@@ -80,6 +80,7 @@ ssize_t read_moments(const hvs_file *file, size_t count, hvs_center *pos, hvs_mo
 	FLOAT_TYPE x,y,m;
 	int i = 0, offset = 0;
 	char buffer[HVS_READ_BLOCK_SIZE];
+	int len = 0;
 	char *data;
 	while (fgets(buffer, HVS_READ_BLOCK_SIZE, file->fh) && readcount<count) {
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
@@ -90,6 +91,7 @@ ssize_t read_moments(const hvs_file *file, size_t count, hvs_center *pos, hvs_mo
 		if ((currread = sscanf(buffer, " %lf %lf%n", &x, &y, &offset))>=2) {
 #endif
 			data = buffer;
+			len = strlen(buffer);
 			pos[readcount].x=x;
 			pos[readcount].y=y;
 			data += offset;
@@ -99,6 +101,9 @@ ssize_t read_moments(const hvs_file *file, size_t count, hvs_center *pos, hvs_mo
 #endif
 			return HVS_ERR_WRONG_FILE_FORMAT;
 		}
+		if (offset>len) {
+			return HVS_ERR_NOT_ENOUGH_DATA;
+		}
 		for(i=0;i<NCOMBS;i++) {
 #if HVS_FLOAT_TYPE==HVS_LONG_DOUBLE
 			if ((currread = sscanf(data, " %Lf%n", &m, &offset))>=1) {
@@ -107,12 +112,14 @@ ssize_t read_moments(const hvs_file *file, size_t count, hvs_center *pos, hvs_mo
 #else
 			if ((currread = sscanf(data, " %lf%n", &m, &offset))>=1) {
 #endif
-//				if ((i==1)||(i==2)) m=0.0;
+				if ((i==0)&&(m<HVS_EPS)&&(m>-HVS_EPS)) {
+					return HVS_ERR_FIRST_MOMENT_ZERO;
+				}
 				moment[readcount][i]=m;
-#if HVS_DEBUG>3
-				fprintf(stderr,"Readcount: %i, i: %i, m: %f\n",readcount, i, m);
-#endif
 				data += offset;
+				if (offset>len) {
+					return HVS_ERR_NOT_ENOUGH_DATA;
+				}
 			} else {
 #ifdef HVS_DEBUG
 				fprintf(stderr,"Currread: %i\n",currread);

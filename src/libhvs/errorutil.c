@@ -22,6 +22,12 @@ void hvserror(int status, const char *string) {
 		case HVS_ERR_GMRES_MAX_RESTART:
 			fprintf(stderr, "%s: GMRES: Got max restarts. Try decreasing lambda.\n", string);
 			break;
+		case HVS_ERR_NOT_ENOUGH_DATA:
+			fprintf(stderr, "%s: Wrong input file. Not enough data.\n", string);
+			break;
+		case HVS_ERR_FIRST_MOMENT_ZERO:
+			fprintf(stderr, "%s: Wrong input data. First moment can not be 0.\n", string);
+			break;
 	}
 }
 
