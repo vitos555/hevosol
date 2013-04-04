@@ -185,6 +185,9 @@ int main(int argc, char **argv) {
 	}
 	// Deinitialize solver
 	free_solver(&state);
+	if (params.tmpmomentsfile!=NULL) {
+		remove(params.tmpmomentsfile);
+	}
 	endtime = time(NULL);
 	if(!quiet) {
 #ifdef HVS_PROFILE
