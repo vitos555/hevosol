@@ -41,7 +41,7 @@ int free_ode_data(hvs_ode_data *data) {
 }
 
 int update_vorticity_field(hvs_state *state) {
-	int i,j;
+	int i,j,k,k1,k2;
 	FLOAT_TYPE sum;
 #ifdef HVS_PROFILE
     time_t starttime, endtime;
@@ -56,10 +56,11 @@ int update_vorticity_field(hvs_state *state) {
 		sum = 0.0;
 		#pragma omp parallel for reduction(+:sum) private(j) shared(state)
 		for (j=0; j<state->ncenters; j++) {
-			sum += 	state->moments[j][MOM_INDEX(0,0)]*he(state->grid[i].x-state->centers[j].x,state->grid[i].y-state->centers[j].y,state->lambdasq,0,0)+
-				state->moments[j][MOM_INDEX(1,1)]*he(state->grid[i].x-state->centers[j].x,state->grid[i].y-state->centers[j].y,state->lambdasq,1,1)+
-				state->moments[j][MOM_INDEX(0,2)]*he(state->grid[i].x-state->centers[j].x,state->grid[i].y-state->centers[j].y,state->lambdasq,0,2)+
-				state->moments[j][MOM_INDEX(2,0)]*he(state->grid[i].x-state->centers[j].x,state->grid[i].y-state->centers[j].y,state->lambdasq,2,0);
+			for(k=0; j<NCOMBS;j++) {
+				k1 = COMBS_IND1(k);
+				k2 = COMBS_IND2(k);
+				sum += 	state->moments[j][k]*he(state->grid[i].x-state->centers[j].x,state->grid[i].y-state->centers[j].y,state->lambdasq,k1,k2);
+			}
 		}
 		state->vorticity_field[i] = sum;
 	}
